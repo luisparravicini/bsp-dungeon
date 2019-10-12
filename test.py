@@ -14,8 +14,7 @@ SCREEN_SIZE = [WINSIZE[0]*2, WINSIZE[1]*2]
 
 
 sheet = None
-black = Color('black')
-tile_size = 16
+TILE_SIZE = 16
 
 
 class Player:
@@ -37,25 +36,26 @@ class PlayerView:
         self._blit(self.surface)
 
     def _blit(self, surface):
-        global tile_size
+        global TILE_SIZE
 
         surface_pos = (
-            self.player.room_pos[0] * tile_size,
-            self.player.room_pos[1] * tile_size
+            self.player.room_pos[0] * TILE_SIZE,
+            self.player.room_pos[1] * TILE_SIZE
         )
         surface.blit(self.sprite, surface_pos)
 
 
 def tile_at(pos):
-    global sheet, black, tile_size
+    global sheet, TILE_SIZE
 
     cell_size = 17
-    rect = (pos[0] * cell_size, pos[1] * cell_size, tile_size, tile_size)
+    rect = (pos[0] * cell_size, pos[1] * cell_size, TILE_SIZE, TILE_SIZE)
+    black = Color('black')
     return sheet.image_at(rect, colorkey=black)
 
 
 def main():
-    global sheet, black, tile_size
+    global sheet, black, TILE_SIZE
 
     random.seed()
 
@@ -75,7 +75,7 @@ def main():
         # for y in range(12):
         #     for x in range(20):
         #         image = tile_at((x, y))
-        #         buffer.blit(image, (x*tile_size, y*tile_size))
+        #         buffer.blit(image, (x*TILE_SIZE, y*TILE_SIZE))
 
         player_view.update()
 
