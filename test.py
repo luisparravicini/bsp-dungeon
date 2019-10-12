@@ -1,18 +1,12 @@
-#!/usr/bin/env python
-
-"""Based on pygame's example 'starts'"""
-
+#!/usr/bin/env python3
 
 import random
 import pygame
 from pygame.locals import *
 import spritesheet
 
-# constants
 WINSIZE = [320, 200]
 SCREEN_SIZE = [WINSIZE[0]*2, WINSIZE[1]*2]
-
-
 sheet = None
 TILE_SIZE = 16
 
