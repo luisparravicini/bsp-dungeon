@@ -4,18 +4,13 @@
 
 
 import random
-import math
 import pygame
-from time import time
 from pygame.locals import *
 import spritesheet
 
 # constants
 WINSIZE = [320, 200]
 SCREEN_SIZE = [WINSIZE[0]*2, WINSIZE[1]*2]
-WINCENTER = [WINSIZE[0] / 2, WINSIZE[1] / 2]
-CENTER_RADIUS = 25
-NUMSTARS = 150
 
 
 sheet = None
