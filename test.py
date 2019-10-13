@@ -185,6 +185,8 @@ class Game:
 
                 if e.type == KEYDOWN and e.key == K_f:
                     show_fps = not show_fps
+                if e.type == KEYDOWN and e.key == K_QUESTION:
+                    print(self.player.pos)
 
     def change_room_to(self, pos):
         self.cur_room = list(pos)
