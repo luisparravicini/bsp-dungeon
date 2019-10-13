@@ -49,8 +49,7 @@ class RoomView:
 
                 surface_pos[0] = x * TILE_SIZE
                 surface_pos[1] = y * TILE_SIZE
-                sprite = self.sheet.tile_at(tile_pos)
-                self.surface.blit(sprite, surface_pos)
+                self.sheet.blit_tile_at(self.surface, surface_pos, tile_pos)
 
 
 class Level:
@@ -101,19 +100,22 @@ class SpritesheetManager:
         size = tuple(v * SCALE for v in self.sheet.sheet.get_size())
         self.sheet.sheet = pygame.transform.scale(self.sheet.sheet, size)
 
-        self.tiles = dict()
+    def blit_tile_at(self, surface, surface_pos, tile_pos):
+        tile_rect = self._tile_rect_at(tile_pos)
+        surface.blit(self.sheet.sheet, surface_pos, area=tile_rect)
+
+    def _tile_rect_at(self, pos):
+        cell_size = TILE_SIZE + 1 * SCALE
+        return tuple(v * cell_size for v in pos) + (TILE_SIZE,) * 2
 
     def tile_at(self, pos):
-        global TILE_SIZE
+        # colorkey = Color('black')
+        colorkey = (71, 45, 60)
 
-        if pos not in self.tiles:
-            cell_size = TILE_SIZE + 1 * SCALE
-            rect = tuple(v * cell_size for v in pos) + (TILE_SIZE,) * 2
-            # colorkey = Color('black')
-            colorkey = (71, 45, 60)
-            self.tiles[pos] = self.sheet.image_at(rect, colorkey=colorkey)
-
-        return self.tiles[pos]
+        return self.sheet.image_at(
+            self._tile_rect_at(pos),
+            colorkey=colorkey
+        )
 
 
 class Game:
