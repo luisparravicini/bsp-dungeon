@@ -46,6 +46,7 @@ class PlayerView:
         self.player = player
         self.sprite = spritesheet.tile_at((18, 7))
         self.surface = surface
+        self.looking_left = False
 
     def update(self):
         self._blit(self.surface)
@@ -54,20 +55,22 @@ class PlayerView:
         global TILE_SIZE
 
         surface_pos = tuple(v * TILE_SIZE for v in self.player.pos)
-        surface.blit(self.sprite, surface_pos)
+        sprite = pygame.transform.flip(self.sprite, self.looking_left, False)
+        surface.blit(sprite, surface_pos)
 
 
 class SpritesheetManager:
     def __init__(self, path):
-        self.sheet = spritesheet.spritesheet('tiles.png')
+        self.sheet = spritesheet.spritesheet('tiles-color.png')
 
     def tile_at(self, pos):
         global TILE_SIZE
 
         cell_size = 17
         rect = tuple(v * cell_size for v in pos) + (TILE_SIZE,) * 2
-        black = Color('black')
-        return self.sheet.image_at(rect, colorkey=black)
+        # colorkey = Color('black')
+        colorkey = (71, 45, 60)
+        return self.sheet.image_at(rect, colorkey=colorkey)
 
 
 class Game:
@@ -111,8 +114,10 @@ class Game:
 
                 if e.type == KEYDOWN and e.key == K_RIGHT:
                     self.move_right()
+                    player_view.looking_left = False
                 if e.type == KEYDOWN and e.key == K_LEFT:
                     self.move_left()
+                    player_view.looking_left = True
                 if e.type == KEYDOWN and e.key == K_UP:
                     self.player.move((0, -1))
                 if e.type == KEYDOWN and e.key == K_DOWN:
