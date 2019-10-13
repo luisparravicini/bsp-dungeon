@@ -31,7 +31,7 @@ class Level:
 
 class Player:
     def __init__(self, room_pos):
-        self.pos = room_pos
+        self.pos = list(room_pos)
 
     def move(self, delta):
         self.pos[0] += delta[0]
@@ -53,10 +53,7 @@ class PlayerView:
     def _blit(self, surface):
         global TILE_SIZE
 
-        surface_pos = (
-            self.player.pos[0] * TILE_SIZE,
-            self.player.pos[1] * TILE_SIZE
-        )
+        surface_pos = tuple(v * TILE_SIZE for v in self.player.pos)
         surface.blit(self.sprite, surface_pos)
 
 
@@ -68,7 +65,7 @@ class SpritesheetManager:
         global TILE_SIZE
 
         cell_size = 17
-        rect = (pos[0] * cell_size, pos[1] * cell_size, TILE_SIZE, TILE_SIZE)
+        rect = tuple(v * cell_size for v in pos) + (TILE_SIZE,) * 2
         black = Color('black')
         return self.sheet.image_at(rect, colorkey=black)
 
@@ -90,7 +87,7 @@ class Game:
         background_color = (40, 10, 40)
 
         self.level = Level((4, 4))
-        self.player = Player([5, 5])
+        self.player = Player((5, 5))
         player_view = PlayerView(self.sheet, self.player, self.buffer)
 
         self.change_room_to((1, 1))
