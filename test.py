@@ -7,6 +7,7 @@ from sprite_sheet_manager import SpritesheetManager
 from room import Room, RoomView
 from level import Level
 from player import Player, PlayerView
+from level_generator import LevelGenerator
 import conf
 
 
@@ -26,11 +27,13 @@ class Game:
         background_color = (40, 10, 40)
 
         self.level = Level((4, 4), self.bkg_surface, self.sheet, background_color)
+        self.level_generator = LevelGenerator(self.level)
         self.player = Player((5, 5))
         player_view = PlayerView(self.sheet, self.player, self.screen)
         fps_font = pygame.font.Font(None, 42)
 
         self.change_room_to((1, 1))
+        self.level_generator.create(self.cur_room)
 
         done = 0
         show_fps = False

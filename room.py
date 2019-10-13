@@ -5,14 +5,20 @@ class Room:
     def __init__(self):
         self.tiles = list(None for _ in range(conf.ROOM_SIZE[0] * conf.ROOM_SIZE[1]))
 
-        import random
-        self.tiles = list((random.randint(0, 31), random.randint(0, 31)) for x in self.tiles)
+        # import random
+        # self.tiles = list((random.randint(0, 31), random.randint(0, 31)) for x in self.tiles)
 
     def update(self):
         pass
 
+    def set_tile(self, pos, tile_pos):
+        self.tiles[self._tile_index(pos)] = tile_pos
+
     def tile_at(self, pos):
-        return self.tiles[pos[0] + pos[1] * conf.ROOM_SIZE[1]]
+        return self.tiles[self._tile_index(pos)]
+
+    def _tile_index(self, pos):
+        return pos[0] + pos[1] * conf.ROOM_SIZE[1]
 
 
 class RoomView:
