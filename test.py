@@ -117,9 +117,9 @@ class Game:
                 if e.type == KEYDOWN and e.key == K_LEFT:
                     self.move_left()
                 if e.type == KEYDOWN and e.key == K_UP:
-                    player.move((0, -1))
+                    self.player.move((0, -1))
                 if e.type == KEYDOWN and e.key == K_DOWN:
-                    player.move((0, 1))
+                    self.player.move((0, 1))
 
     def change_room_to(self, pos):
         self.cur_room = list(pos)
