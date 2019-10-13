@@ -85,7 +85,7 @@ class Game:
         self.sheet = SpritesheetManager('tiles.png')
 
     def main(self):
-        global black, TILE_SIZE
+        global TILE_SIZE
 
         background_color = (40, 10, 40)
 
