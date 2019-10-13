@@ -3,122 +3,11 @@
 import random
 import pygame
 from pygame.locals import *
-import spritesheet
-
-WIN_SIZE = [320, 200]
-SCALE = 3
-TILE_SIZE = 16 * SCALE
-SCREEN_SIZE = [WIN_SIZE[0] * SCALE, WIN_SIZE[1] * SCALE]
-ROOM_SIZE = [int(v / TILE_SIZE) for v in SCREEN_SIZE]
-
-
-class Room:
-    def __init__(self):
-        self.tiles = list(None for _ in range(ROOM_SIZE[0] * ROOM_SIZE[1]))
-
-        import random
-        self.tiles = list((random.randint(0, 31), random.randint(0, 31)) for x in self.tiles)
-
-    def update(self):
-        pass
-
-    def tile_at(self, pos):
-        return self.tiles[pos[0] + pos[1] * ROOM_SIZE[1]]
-
-
-class RoomView:
-    def __init__(self, surface, sheet, background_color):
-        self.room = Room()
-        self.surface = surface
-        self.sheet = sheet
-        self.background_color = background_color
-
-    def update(self, needs_redraw):
-        self.room.update()
-        if needs_redraw:
-            self._blit()
-
-    def _blit(self):
-        global TILE_SIZE
-
-        self.surface.fill(self.background_color)
-
-        surface_pos = [0, 0]
-        for y in range(ROOM_SIZE[1]):
-            for x in range(ROOM_SIZE[0]):
-                tile_pos = self.room.tile_at((x, y))
-                if tile_pos is None:
-                    continue
-
-                surface_pos[0] = x * TILE_SIZE
-                surface_pos[1] = y * TILE_SIZE
-                self.sheet.blit_tile_at(self.surface, surface_pos, tile_pos)
-
-
-class Level:
-    def __init__(self, size, surface, sheet, background_color):
-        self.size = size
-        self.rooms = tuple(RoomView(surface, sheet, background_color) for x in range(size[0] * size[1]))
-
-    def room_at(self, pos):
-        index = pos[0] + pos[1] * self.size[1]
-        return self.rooms[index]
-
-
-class Player:
-    def __init__(self, room_pos):
-        self.pos = list(room_pos)
-
-    def move(self, delta):
-        self.pos[0] += delta[0]
-        self.pos[1] += delta[1]
-
-    def move_to(self, pos):
-        self.pos = list(pos)
-
-
-class PlayerView:
-    def __init__(self, spritesheet, player, surface):
-        self.player = player
-        self.sprite = spritesheet.tile_at((18, 7))
-        self.surface = surface
-        self.looking_left = False
-
-    def update(self):
-        self._blit()
-
-    def _blit(self):
-        global TILE_SIZE
-
-        surface_pos = tuple(v * TILE_SIZE for v in self.player.pos)
-        sprite = pygame.transform.flip(self.sprite, self.looking_left, False)
-        self.surface.blit(sprite, surface_pos)
-
-
-class SpritesheetManager:
-    def __init__(self, path):
-        global SCALE
-
-        self.sheet = spritesheet.spritesheet('tiles-color.png')
-        size = tuple(v * SCALE for v in self.sheet.sheet.get_size())
-        self.sheet.sheet = pygame.transform.scale(self.sheet.sheet, size)
-
-    def blit_tile_at(self, surface, surface_pos, tile_pos):
-        tile_rect = self._tile_rect_at(tile_pos)
-        surface.blit(self.sheet.sheet, surface_pos, area=tile_rect)
-
-    def _tile_rect_at(self, pos):
-        cell_size = TILE_SIZE + 1 * SCALE
-        return tuple(v * cell_size for v in pos) + (TILE_SIZE,) * 2
-
-    def tile_at(self, pos):
-        # colorkey = Color('black')
-        colorkey = (71, 45, 60)
-
-        return self.sheet.image_at(
-            self._tile_rect_at(pos),
-            colorkey=colorkey
-        )
+from sprite_sheet_manager import SpritesheetManager
+from room import Room, RoomView
+from level import Level
+from player import Player, PlayerView
+import conf
 
 
 class Game:
@@ -127,15 +16,13 @@ class Game:
         random.seed()
 
         pygame.init()
-        self.screen = pygame.display.set_mode(SCREEN_SIZE)
-        self.bkg_surface = pygame.Surface(SCREEN_SIZE)
+        self.screen = pygame.display.set_mode(conf.SCREEN_SIZE)
+        self.bkg_surface = pygame.Surface(conf.SCREEN_SIZE)
         pygame.display.set_caption('..--..')
         self.sheet = SpritesheetManager('tiles.png')
         self.clock = pygame.time.Clock()
 
     def main(self):
-        global TILE_SIZE
-
         background_color = (40, 10, 40)
 
         self.level = Level((4, 4), self.bkg_surface, self.sheet, background_color)
@@ -204,13 +91,13 @@ class Game:
     def move_up(self):
         delta = (0, -1)
         pos_index = 1
-        new_room_pos = (self.player.pos[0], ROOM_SIZE[1] - 1)
+        new_room_pos = (self.player.pos[0], conf.ROOM_SIZE[1] - 1)
         self.move_dec(delta, pos_index, new_room_pos)
 
     def move_left(self):
         delta = (-1, 0)
         pos_index = 0
-        new_room_pos = (ROOM_SIZE[0] - 1, self.player.pos[1])
+        new_room_pos = (conf.ROOM_SIZE[0] - 1, self.player.pos[1])
         self.move_dec(delta, pos_index, new_room_pos)
 
     def move_down(self):
@@ -226,7 +113,7 @@ class Game:
         self.move_inc(delta, pos_index, new_room_pos)
 
     def move_inc(self, delta, pos_index, new_room_pos):
-        if self.player.pos[pos_index] < ROOM_SIZE[pos_index] - 1:
+        if self.player.pos[pos_index] < conf.ROOM_SIZE[pos_index] - 1:
             self.player.move(delta)
             return
 
