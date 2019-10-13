@@ -15,10 +15,15 @@ ROOM_SIZE = [int(v / TILE_SIZE) for v in SCREEN_SIZE]
 class Room:
     def __init__(self):
         self.tiles = list(None for _ in range(ROOM_SIZE[0] * ROOM_SIZE[1]))
-        pass
+
+        import random
+        self.tiles = list((random.randint(0, 31), random.randint(0, 31)) for x in self.tiles)
 
     def update(self):
         pass
+
+    def tile_at(self, pos):
+        return self.tiles[pos[0] + pos[1] * ROOM_SIZE[1]]
 
 
 class RoomView:
@@ -41,9 +46,7 @@ class RoomView:
         surface_pos = [0, 0]
         for y in range(ROOM_SIZE[1]):
             for x in range(ROOM_SIZE[0]):
-                tile_pos = self.room.tiles[x + y * ROOM_SIZE[1]]
-                import random
-                tile_pos = (random.randint(0, 32), random.randint(0, 32))
+                tile_pos = self.room.tile_at((x, y))
                 if tile_pos is None:
                     continue
 
@@ -185,8 +188,9 @@ class Game:
 
                 if e.type == KEYDOWN and e.key == K_f:
                     show_fps = not show_fps
-                if e.type == KEYDOWN and e.key == K_QUESTION:
-                    print(self.player.pos)
+                if e.type == KEYDOWN and e.key == K_g:
+                    tile_id = room_view.room.tile_at(self.player.pos)
+                    print('tile at player', tile_id)
 
     def change_room_to(self, pos):
         self.cur_room = list(pos)
