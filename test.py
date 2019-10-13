@@ -38,8 +38,8 @@ class Player:
         self.pos[0] += delta[0]
         self.pos[1] += delta[1]
 
-    def move_to(self, x, y):
-        self.pos = [x, y]
+    def move_to(self, pos):
+        self.pos = list(pos)
 
 
 class PlayerView:
@@ -135,40 +135,47 @@ class Game:
         self.change_room_to(new_pos)
 
     def move_up(self):
-        if self.player.pos[1] > 0:
-            self.player.move((0, -1))
-            return
-
-        if self.cur_room[1] > 0:
-            self.player.move_to(self.player.pos[0], ROOM_SIZE[1] - 1)
-            self.change_room((0, -1))
-
-    def move_down(self):
-        if self.player.pos[1] < ROOM_SIZE[1] - 1:
-            self.player.move((0, 1))
-            return
-
-        if self.cur_room[1] < self.level.size[1] - 1:
-            self.player.move_to(self.player.pos[0], 0)
-            self.change_room((0, 1))
+        delta = (0, -1)
+        pos_index = 1
+        new_room_pos = (self.player.pos[0], ROOM_SIZE[1] - 1)
+        self.move_dec(delta, pos_index, new_room_pos)
 
     def move_left(self):
-        if self.player.pos[0] > 0:
-            self.player.move((-1, 0))
-            return
+        delta = (-1, 0)
+        pos_index = 0
+        new_room_pos = (ROOM_SIZE[0] - 1, self.player.pos[1])
+        self.move_dec(delta, pos_index, new_room_pos)
 
-        if self.cur_room[0] > 0:
-            self.player.move_to(ROOM_SIZE[0] - 1, self.player.pos[1])
-            self.change_room((-1, 0))
+
+    def move_down(self):
+        delta = (0, 1)
+        pos_index = 1
+        new_room_pos = (self.player.pos[0], 0)
+        self.move_inc(delta, pos_index, new_room_pos)
 
     def move_right(self):
-        if self.player.pos[0] < ROOM_SIZE[0] - 1:
-            self.player.move((1, 0))
+        delta = (1, 0)
+        pos_index = 0
+        new_room_pos = (0, self.player.pos[1])
+        self.move_inc(delta, pos_index, new_room_pos)
+
+    def move_inc(self, delta, pos_index, new_room_pos):
+        if self.player.pos[pos_index] < ROOM_SIZE[pos_index] - 1:
+            self.player.move(delta)
             return
 
-        if self.cur_room[0] < self.level.size[0] - 1:
-            self.player.move_to(0, self.player.pos[1])
-            self.change_room((1, 0))
+        if self.cur_room[pos_index] < self.level.size[pos_index] - 1:
+            self.player.move_to(new_room_pos)
+            self.change_room(delta)
+
+    def move_dec(self, delta, pos_index, new_room_pos):
+        if self.player.pos[pos_index] > 0:
+            self.player.move(delta)
+            return
+
+        if self.cur_room[pos_index] > 0:
+            self.player.move_to(new_room_pos)
+            self.change_room(delta)
 
 
 if __name__ == '__main__':
