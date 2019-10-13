@@ -7,23 +7,44 @@ import spritesheet
 
 WINSIZE = [320, 200]
 SCREEN_SIZE = [WINSIZE[0]*2, WINSIZE[1]*2]
-sheet = None
 TILE_SIZE = 16
+ROOM_SIZE = [int(v / TILE_SIZE) for v in WINSIZE]
+
+
+class Room:
+    def __init__(self):
+        pass
+
+    def update(self):
+        pass
+
+
+class Level:
+    def __init__(self, size):
+        self.size = size
+        self.rooms = tuple(Room() for x in range(size[0] * size[1]))
+
+    def room_at(self, pos):
+        index = pos[0] + pos[1] * self.size[1]
+        return self.rooms[index]
 
 
 class Player:
     def __init__(self, room_pos):
-        self.room_pos = room_pos
+        self.pos = room_pos
 
     def move(self, delta):
-        self.room_pos[0] += delta[0]
-        self.room_pos[1] += delta[1]
+        self.pos[0] += delta[0]
+        self.pos[1] += delta[1]
+
+    def move_to(self, x, y):
+        self.pos = [x, y]
 
 
 class PlayerView:
-    def __init__(self, sheet, player, surface):
+    def __init__(self, spritesheet, player, surface):
         self.player = player
-        self.sprite = tile_at((18, 7))
+        self.sprite = spritesheet.tile_at((18, 7))
         self.surface = surface
 
     def update(self):
@@ -33,63 +54,96 @@ class PlayerView:
         global TILE_SIZE
 
         surface_pos = (
-            self.player.room_pos[0] * TILE_SIZE,
-            self.player.room_pos[1] * TILE_SIZE
+            self.player.pos[0] * TILE_SIZE,
+            self.player.pos[1] * TILE_SIZE
         )
         surface.blit(self.sprite, surface_pos)
 
 
-def tile_at(pos):
-    global sheet, TILE_SIZE
+class SpritesheetManager:
+    def __init__(self, path):
+        self.sheet = spritesheet.spritesheet('tiles.png')
 
-    cell_size = 17
-    rect = (pos[0] * cell_size, pos[1] * cell_size, TILE_SIZE, TILE_SIZE)
-    black = Color('black')
-    return sheet.image_at(rect, colorkey=black)
+    def tile_at(self, pos):
+        global TILE_SIZE
+
+        cell_size = 17
+        rect = (pos[0] * cell_size, pos[1] * cell_size, TILE_SIZE, TILE_SIZE)
+        black = Color('black')
+        return self.sheet.image_at(rect, colorkey=black)
 
 
-def main():
-    global sheet, black, TILE_SIZE
+class Game:
 
-    random.seed()
+    def setup(self):
+        random.seed()
 
-    pygame.init()
-    screen = pygame.display.set_mode(SCREEN_SIZE)
-    buffer = pygame.Surface(WINSIZE)
-    pygame.display.set_caption('..--..')
-    background_color = (40, 10, 40)
+        pygame.init()
+        self.screen = pygame.display.set_mode(SCREEN_SIZE)
+        self.buffer = pygame.Surface(WINSIZE)
+        pygame.display.set_caption('..--..')
+        self.sheet = SpritesheetManager('tiles.png')
 
-    sheet = spritesheet.spritesheet('tiles.png')
-    player = Player([5, 5])
-    player_view = PlayerView(sheet, player, buffer)
+    def main(self):
+        global black, TILE_SIZE
 
-    done = 0
-    while not done:
-        buffer.fill(background_color)
-        # for y in range(12):
-        #     for x in range(20):
-        #         image = tile_at((x, y))
-        #         buffer.blit(image, (x*TILE_SIZE, y*TILE_SIZE))
+        background_color = (40, 10, 40)
 
-        player_view.update()
+        self.level = Level((4, 4))
+        self.player = Player([5, 5])
+        player_view = PlayerView(self.sheet, self.player, self.buffer)
 
-        pygame.transform.scale2x(buffer, screen)
-        pygame.display.update()
+        self.cur_room = [1, 1]
+        print('room', self.cur_room)
 
-        for e in pygame.event.get():
-            if e.type == QUIT or (e.type == KEYUP and e.key == K_ESCAPE):
-                done = 1
-                break
+        done = 0
+        while not done:
+            self.buffer.fill(background_color)
 
-            if e.type == KEYDOWN and e.key == K_RIGHT:
-                player.move((1, 0))
-            if e.type == KEYDOWN and e.key == K_LEFT:
-                player.move((-1, 0))
-            if e.type == KEYDOWN and e.key == K_UP:
-                player.move((0, -1))
-            if e.type == KEYDOWN and e.key == K_DOWN:
-                player.move((0, 1))
+            room = self.level.room_at(self.cur_room)
+            room.update()
+
+            player_view.update()
+
+            pygame.transform.scale2x(self.buffer, self.screen)
+            pygame.display.update()
+
+            for e in pygame.event.get():
+                if e.type == QUIT or (e.type == KEYUP and e.key == K_ESCAPE):
+                    done = 1
+                    break
+
+                if e.type == KEYDOWN and e.key == K_RIGHT:
+                    self.move_right()
+                if e.type == KEYDOWN and e.key == K_LEFT:
+                    self.move_left()
+                if e.type == KEYDOWN and e.key == K_UP:
+                    player.move((0, -1))
+                if e.type == KEYDOWN and e.key == K_DOWN:
+                    player.move((0, 1))
+
+    def move_left(self):
+        if self.player.pos[0] > 0:
+            self.player.move((-1, 0))
+            return
+
+        if self.cur_room[0] > 0:
+            self.player.move_to(ROOM_SIZE[0] - 1, self.player.pos[1])
+            self.cur_room[0] -= 1
+            print('changed room', self.cur_room)
+
+    def move_right(self):
+        if self.player.pos[0] < ROOM_SIZE[0] - 1:
+            self.player.move((1, 0))
+            return
+
+        if self.cur_room[0] < self.level.size[0] - 1:
+            self.player.move_to(0, self.player.pos[1])
+            self.cur_room[0] += 1
+            print('changed room', self.cur_room)
 
 
 if __name__ == '__main__':
-    main()
+    game = Game()
+    game.setup()
+    game.main()
