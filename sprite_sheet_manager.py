@@ -18,9 +18,9 @@ class SpritesheetManager:
 
     def tile_at(self, pos):
         # colorkey = Color('black')
-        colorkey = (71, 45, 60)
+        # colorkey = (71, 45, 60)
 
         return self.sheet.image_at(
-            self._tile_rect_at(pos),
-            colorkey=colorkey
+            self._tile_rect_at(pos)
+            # colorkey=colorkey
         )
