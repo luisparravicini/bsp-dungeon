@@ -93,8 +93,7 @@ class Game:
         self.player = Player([5, 5])
         player_view = PlayerView(self.sheet, self.player, self.buffer)
 
-        self.cur_room = [1, 1]
-        print('room', self.cur_room)
+        self.change_room_to((1, 1))
 
         done = 0
         while not done:
@@ -122,6 +121,14 @@ class Game:
                 if e.type == KEYDOWN and e.key == K_DOWN:
                     player.move((0, 1))
 
+    def change_room_to(self, pos):
+        self.cur_room = list(pos)
+        print('changed room', self.cur_room)
+
+    def change_room(self, deltas):
+        new_pos = (self.cur_room[0] + deltas[0], self.cur_room[1] + deltas[1])
+        self.change_room_to(new_pos)
+
     def move_left(self):
         if self.player.pos[0] > 0:
             self.player.move((-1, 0))
@@ -129,8 +136,7 @@ class Game:
 
         if self.cur_room[0] > 0:
             self.player.move_to(ROOM_SIZE[0] - 1, self.player.pos[1])
-            self.cur_room[0] -= 1
-            print('changed room', self.cur_room)
+            self.change_room((-1, 0))
 
     def move_right(self):
         if self.player.pos[0] < ROOM_SIZE[0] - 1:
@@ -139,8 +145,7 @@ class Game:
 
         if self.cur_room[0] < self.level.size[0] - 1:
             self.player.move_to(0, self.player.pos[1])
-            self.cur_room[0] += 1
-            print('changed room', self.cur_room)
+            self.change_room((1, 0))
 
 
 if __name__ == '__main__':
