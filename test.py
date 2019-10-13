@@ -5,10 +5,11 @@ import pygame
 from pygame.locals import *
 import spritesheet
 
-WINSIZE = [320, 200]
-SCREEN_SIZE = [WINSIZE[0]*2, WINSIZE[1]*2]
-TILE_SIZE = 16
-ROOM_SIZE = [int(v / TILE_SIZE) for v in WINSIZE]
+WIN_SIZE = [320, 200]
+SCALE = 2
+TILE_SIZE = 16 * SCALE
+SCREEN_SIZE = [WIN_SIZE[0] * SCALE, WIN_SIZE[1] * SCALE]
+ROOM_SIZE = [int(v / TILE_SIZE) for v in SCREEN_SIZE]
 
 
 class Room:
@@ -61,12 +62,16 @@ class PlayerView:
 
 class SpritesheetManager:
     def __init__(self, path):
+        global SCALE
+
         self.sheet = spritesheet.spritesheet('tiles-color.png')
+        size = tuple(v * SCALE for v in self.sheet.sheet.get_size())
+        self.sheet.sheet = pygame.transform.scale(self.sheet.sheet, size)
 
     def tile_at(self, pos):
         global TILE_SIZE
 
-        cell_size = 17
+        cell_size = TILE_SIZE + 1 * SCALE
         rect = tuple(v * cell_size for v in pos) + (TILE_SIZE,) * 2
         # colorkey = Color('black')
         colorkey = (71, 45, 60)
@@ -80,7 +85,6 @@ class Game:
 
         pygame.init()
         self.screen = pygame.display.set_mode(SCREEN_SIZE)
-        self.buffer = pygame.Surface(WINSIZE)
         pygame.display.set_caption('..--..')
         self.sheet = SpritesheetManager('tiles.png')
 
@@ -91,20 +95,19 @@ class Game:
 
         self.level = Level((4, 4))
         self.player = Player((5, 5))
-        player_view = PlayerView(self.sheet, self.player, self.buffer)
+        player_view = PlayerView(self.sheet, self.player, self.screen)
 
         self.change_room_to((1, 1))
 
         done = 0
         while not done:
-            self.buffer.fill(background_color)
+            self.screen.fill(background_color)
 
             room = self.level.room_at(self.cur_room)
             room.update()
 
             player_view.update()
 
-            pygame.transform.scale2x(self.buffer, self.screen)
             pygame.display.update()
 
             for e in pygame.event.get():
