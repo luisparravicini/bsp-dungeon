@@ -122,9 +122,9 @@ class Game:
                     self.move_left()
                     player_view.looking_left = True
                 if e.type == KEYDOWN and e.key == K_UP:
-                    self.player.move((0, -1))
+                    self.move_up()
                 if e.type == KEYDOWN and e.key == K_DOWN:
-                    self.player.move((0, 1))
+                    self.move_down()
 
     def change_room_to(self, pos):
         self.cur_room = list(pos)
@@ -133,6 +133,24 @@ class Game:
     def change_room(self, deltas):
         new_pos = (self.cur_room[0] + deltas[0], self.cur_room[1] + deltas[1])
         self.change_room_to(new_pos)
+
+    def move_up(self):
+        if self.player.pos[1] > 0:
+            self.player.move((0, -1))
+            return
+
+        if self.cur_room[1] > 0:
+            self.player.move_to(self.player.pos[0], ROOM_SIZE[1] - 1)
+            self.change_room((0, -1))
+
+    def move_down(self):
+        if self.player.pos[1] < ROOM_SIZE[1] - 1:
+            self.player.move((0, 1))
+            return
+
+        if self.cur_room[1] < self.level.size[1] - 1:
+            self.player.move_to(self.player.pos[0], 0)
+            self.change_room((0, 1))
 
     def move_left(self):
         if self.player.pos[0] > 0:
