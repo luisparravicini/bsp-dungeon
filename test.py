@@ -124,28 +124,7 @@ class Game:
         self.move_x(delta, pos_index)
 
     def move_x(self, delta, pos_index):
-        pos_in_screen = (
-            self.player.pos[0] - self.viewport_pos[0] + delta[0],
-            self.player.pos[1] - self.viewport_pos[1] + delta[1],
-        )
-        if self.no_scroll_area.collidepoint(pos_in_screen):
-            self.player.move(delta)
-            return
-
-        pos_in_level = [
-            self.viewport_pos[0] + delta[0],
-            self.viewport_pos[1] + delta[1],
-        ]
-        if delta[pos_index] > 0:
-            pos_in_level[0] += conf.ROOM_SIZE[0]
-            pos_in_level[1] += conf.ROOM_SIZE[1]
-
-        if pos_in_level[pos_index] >= 0 and pos_in_level[pos_index] < self.level.size[pos_index]:
-            self.player.move(delta)
-            self.viewport_pos = (
-                self.viewport_pos[0] + delta[0],
-                self.viewport_pos[1] + delta[1],
-            )
+        self.move_y(delta, pos_index)
 
     def move_y(self, delta, pos_index):
         pos_in_screen = (
