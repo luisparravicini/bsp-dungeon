@@ -128,9 +128,14 @@ class Game:
             self.player.pos[0] - self.viewport_pos[0] + delta[0],
             self.player.pos[1] - self.viewport_pos[1] + delta[1],
         )
+        new_player_pos = (
+            self.player.pos[0] + delta[0],
+            self.player.pos[1] + delta[1],
+        )
         if self.no_scroll_area.collidepoint(pos_in_screen):
-            self.player.move(delta)
-            return
+            if self.level.empty_at(new_player_pos):
+                self.player.move(delta)
+                return
 
         pos_in_level = [
             self.viewport_pos[0] + delta[0],
@@ -141,11 +146,12 @@ class Game:
             pos_in_level[1] += conf.ROOM_SIZE[1]
 
         if pos_in_level[pos_index] >= 0 and pos_in_level[pos_index] < self.level.size[pos_index]:
-            self.player.move(delta)
-            self.viewport_pos = (
-                self.viewport_pos[0] + delta[0],
-                self.viewport_pos[1] + delta[1],
-            )
+            if self.level.empty_at(new_player_pos):
+                self.player.move(delta)
+                self.viewport_pos = (
+                    self.viewport_pos[0] + delta[0],
+                    self.viewport_pos[1] + delta[1],
+                )
 
 
 if __name__ == '__main__':
