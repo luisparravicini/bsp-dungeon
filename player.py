@@ -10,9 +10,6 @@ class Player:
         self.pos[0] += delta[0]
         self.pos[1] += delta[1]
 
-    def move_to(self, pos):
-        self.pos = list(pos)
-
 
 class PlayerView:
     def __init__(self, spritesheet, player, surface):
@@ -21,10 +18,14 @@ class PlayerView:
         self.surface = surface
         self.looking_left = False
 
-    def update(self):
-        self._blit()
+    def update(self, viewport_pos):
+        self._blit(viewport_pos)
 
-    def _blit(self):
-        surface_pos = tuple(v * conf.TILE_SIZE for v in self.player.pos)
+    def _blit(self, viewport_pos):
+        surface_pos = (
+            # tuple(v * conf.TILE_SIZE for v in self.player.pos)
+            (self.player.pos[0] - viewport_pos[0]) * conf.TILE_SIZE,
+            (self.player.pos[1] - viewport_pos[1]) * conf.TILE_SIZE,
+        )
         sprite = pygame.transform.flip(self.sprite, self.looking_left, False)
         self.surface.blit(sprite, surface_pos)
