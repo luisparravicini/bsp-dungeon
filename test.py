@@ -106,27 +106,24 @@ class Game:
     def move_up(self):
         delta = (0, -1)
         pos_index = 1
-        self.move_y(delta, pos_index)
+        self.move(delta, pos_index)
 
     def move_left(self):
         delta = (-1, 0)
         pos_index = 0
-        self.move_x(delta, pos_index)
+        self.move(delta, pos_index)
 
     def move_down(self):
         delta = (0, 1)
         pos_index = 1
-        self.move_y(delta, pos_index)
+        self.move(delta, pos_index)
 
     def move_right(self):
         delta = (1, 0)
         pos_index = 0
-        self.move_x(delta, pos_index)
+        self.move(delta, pos_index)
 
-    def move_x(self, delta, pos_index):
-        self.move_y(delta, pos_index)
-
-    def move_y(self, delta, pos_index):
+    def move(self, delta, pos_index):
         pos_in_screen = (
             self.player.pos[0] - self.viewport_pos[0] + delta[0],
             self.player.pos[1] - self.viewport_pos[1] + delta[1],
