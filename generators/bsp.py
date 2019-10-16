@@ -12,6 +12,10 @@ class TreeNode:
 
 
 class BSPGenerator:
+    """
+        Based on
+        http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
+    """
     def __init__(self, level):
         self.level = level
         self.iterations = 4
