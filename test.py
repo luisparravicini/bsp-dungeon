@@ -4,7 +4,7 @@ import random
 import pygame
 from pygame.locals import *
 from sprite_sheet_manager import SpritesheetManager
-from level import Level2
+from level import Level
 from player import Player, PlayerView
 from level_generator import LevelGenerator
 import conf
@@ -25,7 +25,7 @@ class Game:
     def main(self):
         background_color = (40, 10, 40)
 
-        self.level = Level2((80, 80), self.bkg_surface, self.sheet, background_color)
+        self.level = Level((80, 80), self.bkg_surface, self.sheet, background_color)
         self.viewport_pos = (
             int(self.level.size[0] / 2 - conf.ROOM_SIZE[0] / 2),
             int(self.level.size[1] / 2 - conf.ROOM_SIZE[1] / 2),

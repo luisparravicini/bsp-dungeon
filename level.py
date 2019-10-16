@@ -1,7 +1,7 @@
 import conf
 
 
-class Level2:
+class Level:
     def __init__(self, size, surface, sheet, background_color):
         self.size = size
         self.tiles = list(None for _ in range(size[0] * size[1]))
