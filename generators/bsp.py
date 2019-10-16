@@ -5,29 +5,58 @@ import pygame
 class TreeNode:
     def __init__(self, rect):
         self.rect = rect
-        self.children = None
+        self.children = ()
+
+    def has_children(self):
+        return len(self.children) > 0
 
 
 class BSPGenerator:
     def __init__(self, level):
         self.level = level
         self.iterations = 4
-        self.nodes = None
-        self.max_room = (8, 8)
+        self.min_room = (3, 3)
 
     def create(self, center_pos):
+        self.nodes = list()
+        self.rooms = list()
+
         self.do_split()
         self.put_rooms()
         self.make_level()
-        self.text_dump(self.nodes)
+        self.text_dump()
 
-    def put_rooms(self):
-        pass
+    def put_rooms(self, node=None):
+        if node is None:
+            self.put_rooms(self.nodes)
+            return
+
+        for child in node.children:
+            if child.has_children():
+                self.put_rooms(child)
+            else:
+                self.put_room(child)
+
+    def put_room(self, node):
+        rect = node.rect
+        border = 2
+        if rect.width <= self.min_room[0] + border or rect.height <= self.min_room[1] + border:
+            return
+
+        room = node.rect.copy()
+        room.width = random.randint(self.min_room[0], room.width - 2)
+        room.height = random.randint(self.min_room[0], room.height - 2)
+        room.x += random.randint(1, rect.width - room.width)
+        room.y += random.randint(1, rect.height - room.height)
+
+        print(room, node.rect)
+
+        self.rooms.append(room)
 
     def do_split(self):
         size = self.level.size
         node = TreeNode(pygame.Rect(0, 0, size[0], size[1]))
-        iterations_left = 4
+        iterations_left = 5
         split_vert = random.random() > 0.5
         self.split(node, iterations_left, split_vert)
         self.nodes = node
@@ -62,9 +91,17 @@ class BSPGenerator:
             self.split(childA, iterations_left - 1, not split_vert)
             self.split(childB, iterations_left - 1, not split_vert)
 
-    def text_dump(self, node, level=0):
+    def text_dump_node(self, node, level=0):
         print(" " * level * 4, node.rect)
-        if node.children is not None:
-            self.text_dump(node.children[0], level + 1)
-            self.text_dump(node.children[1], level + 1)
+        for child in node.children:
+            self.text_dump_node(child, level + 1)
+
+    def text_dump(self):
+        print("divisions")
+        self.text_dump_node(self.nodes, 0)
+
+        print("\nrooms")
+        for room in self.rooms:
+            print(room)
+
 

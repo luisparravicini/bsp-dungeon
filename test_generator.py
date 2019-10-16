@@ -10,18 +10,28 @@ from pygame.locals import *
 def draw_node(node, surface, scale):
     color = Color('white')
 
-    if node.children is None:
-        rect = node.rect
-        pygame.draw.rect(surface, color, (
-            rect.x * scale,
-            rect.y * scale,
-            rect.width * scale,
-            rect.height * scale)
-        , width=1)
+    for child in node.children:
+        draw_node(child, surface, scale)
 
-    if node.children is not None:
-        draw_node(node.children[0], surface, scale)
-        draw_node(node.children[1], surface, scale)
+    rect = node.rect
+    pygame.draw.rect(surface, color, (
+        rect.x * scale,
+        rect.y * scale,
+        rect.width * scale,
+        rect.height * scale)
+    , width=1)
+
+
+def draw_rooms(rooms, surface, scale):
+    color = Color('green')
+
+    for room in rooms:
+        pygame.draw.rect(surface, color, (
+            room.x * scale,
+            room.y * scale,
+            room.width * scale,
+            room.height * scale)
+        , width=1)
 
 
 level = Level((80, 80), None, None, None)
@@ -49,6 +59,7 @@ while not done:
         level_generator.create(viewport_pos)
         screen.fill(Color('black'))
         draw_node(level_generator.generator.nodes, screen, scale)
+        draw_rooms(level_generator.generator.rooms, screen, scale)
 
     pygame.display.update()
 
