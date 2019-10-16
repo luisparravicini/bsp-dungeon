@@ -24,7 +24,7 @@ class BSPGenerator:
         self.do_split()
         self.put_rooms()
         self.make_level()
-        self.text_dump()
+        # self.text_dump()
 
     def put_rooms(self, node=None):
         if node is None:
@@ -48,8 +48,6 @@ class BSPGenerator:
         room.height = random.randint(self.min_room[0], room.height - 2)
         room.x += random.randint(1, rect.width - room.width)
         room.y += random.randint(1, rect.height - room.height)
-
-        print(room, node.rect)
 
         self.rooms.append(room)
 
