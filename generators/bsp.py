@@ -16,16 +16,21 @@ class BSPGenerator:
         self.max_room = (8, 8)
 
     def create(self, center_pos):
+        self.do_split()
+        self.put_rooms()
+        self.make_level()
+        self.text_dump(self.nodes)
+
+    def put_rooms(self):
+        pass
+
+    def do_split(self):
         size = self.level.size
         node = TreeNode(pygame.Rect(0, 0, size[0], size[1]))
-
         iterations_left = 4
-        self.split(node, iterations_left)
-
-        self.text_dump(node)
+        split_vert = random.random() > 0.5
+        self.split(node, iterations_left, split_vert)
         self.nodes = node
-
-        self.make_level()
 
     def make_level(self):
         wall_tile = (0, 13)
@@ -34,9 +39,8 @@ class BSPGenerator:
             for y in range(self.level.size[0]):
                 self.level.set_tile((x, y), wall_tile)
 
-    def split(self, node, iterations_left):
+    def split(self, node, iterations_left, split_vert):
         rect = node.rect
-        split_vert = random.random() > 0.5
         max_min = (0.3, 0.7)
         v = random.uniform(max_min[0], max_min[1])
         if split_vert:
@@ -55,8 +59,8 @@ class BSPGenerator:
         node.children = (childA, childB)
 
         if iterations_left > 1:
-            self.split(childA, iterations_left - 1)
-            self.split(childB, iterations_left - 1)
+            self.split(childA, iterations_left - 1, not split_vert)
+            self.split(childB, iterations_left - 1, not split_vert)
 
     def text_dump(self, node, level=0):
         print(" " * level * 4, node.rect)
