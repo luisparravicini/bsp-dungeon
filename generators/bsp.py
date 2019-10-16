@@ -13,6 +13,7 @@ class BSPGenerator:
         self.level = level
         self.iterations = 4
         self.nodes = None
+        self.max_room = (8, 8)
 
     def create(self, center_pos):
         size = self.level.size
@@ -21,26 +22,31 @@ class BSPGenerator:
         iterations_left = 4
         self.split(node, iterations_left)
 
+        self.text_dump(node)
+        self.nodes = node
+
+        self.make_level()
+
+    def make_level(self):
         wall_tile = (0, 13)
 
         for x in range(self.level.size[0]):
             for y in range(self.level.size[0]):
                 self.level.set_tile((x, y), wall_tile)
 
-        self.text_dump(node)
-        self.nodes = node
-
     def split(self, node, iterations_left):
         rect = node.rect
         split_vert = random.random() > 0.5
+        max_min = (0.3, 0.7)
+        v = random.uniform(max_min[0], max_min[1])
         if split_vert:
             # vert
-            y = int(random.uniform(0.2, 0.8) * rect.height)
+            y = int(v * rect.height)
             rectA = pygame.Rect(rect.x, rect.y, rect.width, y)
             rectB = pygame.Rect(rect.x, rect.y + y, rect.width, rect.height - y)
         else:
             # horiz
-            x = int(random.uniform(0.2, 0.8) * rect.width)
+            x = int(v * rect.width)
             rectA = pygame.Rect(rect.x, rect.y, x, rect.height)
             rectB = pygame.Rect(rect.x + x, rect.y, rect.width - x, rect.height)
 
