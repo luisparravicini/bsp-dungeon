@@ -27,8 +27,13 @@ class BSPGenerator:
 
         self.do_split()
         self.put_rooms()
+        self.connect_rooms()
+
         self.make_level()
         # self.text_dump()
+
+    def connect_rooms(self):
+        pass
 
     def put_rooms(self, node=None):
         if node is None:
