@@ -57,10 +57,14 @@ viewport_pos = (
 level_generator.create(viewport_pos)
 
 pygame.init()
-screen = pygame.display.set_mode(conf.SCREEN_SIZE)
+scale = 7
+screen_size = (
+    level.size[0] * scale,
+    level.size[1] * scale
+)
+screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
 
-scale = 7
 
 done = False
 needs_gen = True
