@@ -8,7 +8,7 @@ from pygame.locals import *
 
 
 def draw_node(node, surface, scale):
-    color = Color('white')
+    color = (100, 100, 100)
 
     for child in node.children:
         draw_node(child, surface, scale)
@@ -25,13 +25,26 @@ def draw_node(node, surface, scale):
 def draw_rooms(rooms, surface, scale):
     color = Color('green')
 
-    for room in rooms:
+    for room in rooms.values():
         pygame.draw.rect(surface, color, (
             room.x * scale,
             room.y * scale,
             room.width * scale,
             room.height * scale)
         , width=1)
+
+
+def draw_corridors(corridors, surface, scale):
+    color = Color('green')
+
+    for corridor in corridors:
+        pygame.draw.line(surface, color, (
+            corridor[0] * scale,
+            corridor[1] * scale),
+            (corridor[2] * scale,
+            corridor[3] * scale)
+        , width=1)
+
 
 
 level = Level((80, 80), None, None, None)
@@ -63,6 +76,7 @@ while not done:
         screen.fill(Color('black'))
         draw_node(level_generator.generator.nodes, screen, scale)
         draw_rooms(level_generator.generator.rooms, screen, scale)
+        draw_corridors(level_generator.generator.corridors, screen, scale)
 
     pygame.display.update()
 

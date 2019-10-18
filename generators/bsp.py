@@ -18,12 +18,14 @@ class BSPGenerator:
     """
     def __init__(self, level):
         self.level = level
-        self.iterations = 4
-        self.min_room = (3, 3)
+        self.iterations = 5
+        self.min_room = (5, 5)
 
     def create(self, center_pos):
         self.nodes = list()
-        self.rooms = list()
+        self.rooms = dict()
+        self.corridors = list()
+        self.corridors = list()
 
         self.do_split()
         self.put_rooms()
@@ -32,8 +34,75 @@ class BSPGenerator:
         self.make_level()
         # self.text_dump()
 
-    def connect_rooms(self):
-        pass
+    def connect_rooms(self, node=None):
+        if node is None:
+            self.connect_rooms(self.nodes)
+            return
+
+        for child in node.children:
+            self.connect_rooms(child)
+
+        if node.has_children():
+            self.connect_children(*node.children)
+
+    def connect_children(self, a, b):
+        if a not in self.rooms or b not in self.rooms:
+            return
+
+        room_a = self.rooms[a]
+        room_b = self.rooms[b]
+
+        options = list()
+        corridor = self.gen_corridor_y(room_a, room_b)
+        if corridor is not None:
+            options.append(corridor)
+        corridor = self.gen_corridor_x(room_a, room_b)
+        if corridor is not None:
+            options.append(corridor)
+
+        if len(options) == 0:
+            return
+        if len(options) == 1:
+            corridor = options[0]
+        else:
+            corridor = options[random.randint(0, len(options))]
+        self.corridors.append(corridor)
+
+    def gen_corridor_y(self, room_a, room_b):
+        intersect = (
+            max(room_a.y, room_b.y) + 1,
+            min(room_a.bottom, room_b.bottom) - 1
+        )
+        if intersect[0] > intersect[1]:
+            return None
+
+        y = random.randint(intersect[0], intersect[1])
+
+        if room_a.right < room_b.x:
+            xs = (room_a.right, room_b.x)
+        else:
+            xs = (room_b.right, room_a.x)
+
+        corridor = (xs[0], y, xs[1], y)
+        return corridor
+
+    def gen_corridor_x(self, room_a, room_b):
+        intersect = (
+            max(room_a.x, room_b.x) + 1,
+            min(room_a.right, room_b.right) - 1
+        )
+        if intersect[0] > intersect[1]:
+            return None
+
+        x = random.randint(intersect[0], intersect[1])
+
+        if room_a.bottom < room_b.y:
+            ys = (room_a.bottom, room_b.y)
+        else:
+            ys = (room_b.bottom, room_a.y)
+
+        corridor = (x, ys[0], x, ys[1])
+        return corridor
 
     def put_rooms(self, node=None):
         if node is None:
@@ -58,7 +127,7 @@ class BSPGenerator:
         room.x += random.randint(1, rect.width - room.width)
         room.y += random.randint(1, rect.height - room.height)
 
-        self.rooms.append(room)
+        self.rooms[node] = room
 
     def do_split(self):
         size = self.level.size
@@ -95,8 +164,16 @@ class BSPGenerator:
         node.children = (childA, childB)
 
         if iterations_left > 1:
-            self.split(childA, iterations_left - 1, not split_vert)
-            self.split(childB, iterations_left - 1, not split_vert)
+            if random.random() > 0.5:
+                sva = (random.random() > 0.5)
+            else:
+                sva = not split_vert
+            if random.random() > 0.5:
+                svb = (random.random() > 0.5)
+            else:
+                svb = not split_vert
+            self.split(childA, iterations_left - 1, sva)
+            self.split(childB, iterations_left - 1, svb)
 
     def text_dump_node(self, node, level=0):
         print(" " * level * 4, node.rect)
@@ -104,11 +181,10 @@ class BSPGenerator:
             self.text_dump_node(child, level + 1)
 
     def text_dump(self):
+        print()
         print("divisions")
         self.text_dump_node(self.nodes, 0)
 
         print("\nrooms")
         for room in self.rooms:
             print(room)
-
-
