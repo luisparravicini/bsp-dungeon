@@ -78,8 +78,9 @@ class BSPGenerator:
         # TODO connect rooms if they don't have face-to-face walls
 
         if len(options) == 0:
-            print("no connection!", a.rect, b.rect)
+            print("no connection!", a.rect, b.rect, room_a, room_b)
             return
+
         corridor = random.choice(options)
         self.corridors.append(corridor)
 
