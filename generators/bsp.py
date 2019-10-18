@@ -152,21 +152,26 @@ class BSPGenerator:
                 self.level.set_tile((x, y), wall_tile)
 
         for corridor in self.corridors:
-            vert_line = (corridor[0] == corridor[2])
-            if vert_line:
-                x = corridor[0]
-                for y in range(corridor[1], corridor[3]):
-                    self.level.set_tile((x, y), empty_tile)
-            else:
-                y = corridor[0]
-                for x in range(corridor[0], corridor[2]):
-                    self.level.set_tile((x, y), empty_tile)
+            self.carve_corridor(corridor, empty_tile)
 
         for room in self.rooms.values():
-            for x in range(room.x, room.right):
-                for y in range(room.y, room.bottom):
-                    self.level.set_tile((x, y), empty_tile)
+            self.carve_room(room, empty_tile)
 
+    def carve_room(self, room, empty_tile):
+        for x in range(room.x, room.right):
+            for y in range(room.y, room.bottom):
+                self.level.set_tile((x, y), empty_tile)
+
+    def carve_corridor(self, corridor, empty_tile):
+        vert_line = (corridor[0] == corridor[2])
+        if vert_line:
+            x = corridor[0]
+            for y in range(corridor[1], corridor[3]):
+                self.level.set_tile((x, y), empty_tile)
+        else:
+            y = corridor[0]
+            for x in range(corridor[0], corridor[2]):
+                self.level.set_tile((x, y), empty_tile)
 
     def split(self, node, iterations_left, split_vert):
         rect = node.rect
