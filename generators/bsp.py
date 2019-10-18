@@ -45,12 +45,27 @@ class BSPGenerator:
         if node.has_children():
             self.connect_children(*node.children)
 
-    def connect_children(self, a, b):
-        if a not in self.rooms or b not in self.rooms:
-            return
+    def choose_room(self, node):
+        if not node.has_children():
+            return self.rooms.get(node, None)
 
-        room_a = self.rooms[a]
-        room_b = self.rooms[b]
+        rooms = list()
+        for child in node.children:
+            rooms.append(self.choose_room(child))
+
+        if len(rooms) > 1:
+            return random.choice(rooms)
+        if len(rooms) == 1:
+            return rooms[0]
+
+        return None
+
+    def connect_children(self, a, b):
+        room_a = self.choose_room(a)
+        room_b = self.choose_room(b)
+
+        if room_a is None or room_b is None:
+            return
 
         options = list()
         corridor = self.gen_corridor_y(room_a, room_b)
@@ -59,14 +74,13 @@ class BSPGenerator:
         corridor = self.gen_corridor_x(room_a, room_b)
         if corridor is not None:
             options.append(corridor)
+
         # TODO connect rooms if they don't have face-to-face walls
 
         if len(options) == 0:
+            print("no connection!", a, b)
             return
-        if len(options) == 1:
-            corridor = options[0]
-        else:
-            corridor = options[random.randint(0, len(options))]
+        corridor = random.choice(options)
         self.corridors.append(corridor)
 
     def gen_corridor_y(self, room_a, room_b):
@@ -79,12 +93,7 @@ class BSPGenerator:
 
         y = random.randint(intersect[0], intersect[1])
 
-        if room_a.right < room_b.x:
-            xs = (room_a.right, room_b.x)
-        else:
-            xs = (room_b.right, room_a.x)
-
-        corridor = (xs[0], y, xs[1], y)
+        corridor = (room_a.centerx, y, room_b.centerx, y)
         return corridor
 
     def gen_corridor_x(self, room_a, room_b):
@@ -97,12 +106,7 @@ class BSPGenerator:
 
         x = random.randint(intersect[0], intersect[1])
 
-        if room_a.bottom < room_b.y:
-            ys = (room_a.bottom, room_b.y)
-        else:
-            ys = (room_b.bottom, room_a.y)
-
-        corridor = (x, ys[0], x, ys[1])
+        corridor = (x, room_a.centery, x, room_b.centery)
         return corridor
 
     def put_rooms(self, node=None):
