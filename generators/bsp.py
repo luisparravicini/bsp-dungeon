@@ -59,6 +59,7 @@ class BSPGenerator:
         corridor = self.gen_corridor_x(room_a, room_b)
         if corridor is not None:
             options.append(corridor)
+        # TODO connect rooms if they don't have face-to-face walls
 
         if len(options) == 0:
             return
