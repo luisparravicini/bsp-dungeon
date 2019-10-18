@@ -54,7 +54,6 @@ viewport_pos = (
     int(level.size[0] / 2 - conf.ROOM_SIZE[0] / 2),
     int(level.size[1] / 2 - conf.ROOM_SIZE[1] / 2),
 )
-level_generator.create(viewport_pos)
 
 pygame.init()
 scale = 7
