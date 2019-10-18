@@ -21,6 +21,7 @@ class Game:
         pygame.display.set_caption('..--..')
         self.sheet = SpritesheetManager('tiles.png')
         self.clock = pygame.time.Clock()
+        self.ghost_mode = True
 
     def main(self):
         background_color = (40, 10, 40)
@@ -146,7 +147,7 @@ class Game:
             pos_in_level[1] += conf.ROOM_SIZE[1]
 
         if pos_in_level[pos_index] >= 0 and pos_in_level[pos_index] < self.level.size[pos_index]:
-            if self.level.empty_at(new_player_pos):
+            if self.ghost_mode or self.level.empty_at(new_player_pos):
                 self.player.move(delta)
                 self.viewport_pos = (
                     self.viewport_pos[0] + delta[0],
