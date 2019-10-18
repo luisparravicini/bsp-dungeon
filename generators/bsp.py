@@ -165,16 +165,8 @@ class BSPGenerator:
         node.children = (childA, childB)
 
         if iterations_left > 1:
-            if random.random() > 0.5:
-                sva = (random.random() > 0.5)
-            else:
-                sva = not split_vert
-            if random.random() > 0.5:
-                svb = (random.random() > 0.5)
-            else:
-                svb = not split_vert
-            self.split(childA, iterations_left - 1, sva)
-            self.split(childB, iterations_left - 1, svb)
+            self.split(childA, iterations_left - 1, not split_vert)
+            self.split(childB, iterations_left - 1, not split_vert)
 
     def text_dump_node(self, node, level=0):
         print(" " * level * 4, node.rect)
