@@ -38,13 +38,12 @@ def draw_corridors(corridors, surface, scale):
     color = Color('green')
 
     for corridor in corridors:
-        for segment in corridor:
-            pygame.draw.line(surface, color, (
-                segment[0] * scale,
-                segment[1] * scale),
-                (segment[2] * scale,
-                segment[3] * scale)
-            , width=1)
+        pygame.draw.line(surface, color, (
+            corridor[0] * scale,
+            corridor[1] * scale),
+            (corridor[2] * scale,
+            corridor[3] * scale)
+        , width=1)
 
 
 level = Level((80, 80), None, None, None)

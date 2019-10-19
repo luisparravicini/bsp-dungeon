@@ -29,9 +29,15 @@ class BSPGenerator:
         self.do_split()
         self.put_rooms()
         self.connect_rooms(self.nodes)
+        self.prune_corridors()
 
         self.make_level()
         # self.text_dump()
+
+    def prune_corridors(self):
+        i = 0
+        while i < len(self.corridors):
+            i += 1
 
     def connect_rooms(self, node=None):
         for child in node.children:
@@ -74,7 +80,7 @@ class BSPGenerator:
             options.append(corridor)
 
         corridor = random.choice(options)
-        self.corridors.append(corridor)
+        self.corridors.extend(corridor) 
 
     def gen_corridor_xy(self, room_a, room_b):
         x = random.randint(room_a.x, room_a.right)
@@ -181,20 +187,19 @@ class BSPGenerator:
                 self.set_tile((x, y), tile)
 
     def carve_corridor(self, corridor, wall_tile, empty_tile):
-        for segment in corridor:
-            vert_line = (segment[0] == segment[2])
-            if vert_line:
-                x = segment[0]
-                for y in range(segment[1], segment[3]):
-                    self.set_tile((x - 1, y), wall_tile)
-                    self.set_tile((x + 1, y), wall_tile)
-                    self.set_tile((x, y), empty_tile)
-            else:
-                y = segment[0]
-                for x in range(segment[0], segment[2]):
-                    self.set_tile((x, y - 1), wall_tile)
-                    self.set_tile((x, y + 1), wall_tile)
-                    self.set_tile((x, y), empty_tile)
+        vert_line = (corridor[0] == corridor[2])
+        if vert_line:
+            x = corridor[0]
+            for y in range(corridor[1], corridor[3]):
+                self.set_tile((x - 1, y), wall_tile)
+                self.set_tile((x + 1, y), wall_tile)
+                self.set_tile((x, y), empty_tile)
+        else:
+            y = corridor[0]
+            for x in range(corridor[0], corridor[2]):
+                self.set_tile((x, y - 1), wall_tile)
+                self.set_tile((x, y + 1), wall_tile)
+                self.set_tile((x, y), empty_tile)
 
     def split(self, node, iterations_left, split_vert):
         rect = node.rect
