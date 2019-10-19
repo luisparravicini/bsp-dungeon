@@ -28,16 +28,12 @@ class BSPGenerator:
 
         self.do_split()
         self.put_rooms()
-        self.connect_rooms()
+        self.connect_rooms(self.nodes)
 
         self.make_level()
         # self.text_dump()
 
     def connect_rooms(self, node=None):
-        if node is None:
-            self.connect_rooms(self.nodes)
-            return
-
         for child in node.children:
             self.connect_rooms(child)
 
@@ -50,12 +46,12 @@ class BSPGenerator:
 
         rooms = list()
         for child in node.children:
-            rooms.append(self.choose_room(child))
+            r = self.choose_room(child)
+            if r is not None:
+                rooms.append(r)
 
-        if len(rooms) > 1:
+        if len(rooms) > 0:
             return random.choice(rooms)
-        if len(rooms) == 1:
-            return rooms[0]
 
         return None
 
