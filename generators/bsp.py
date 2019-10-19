@@ -151,30 +151,50 @@ class BSPGenerator:
 
         for x in range(self.level.size[0]):
             for y in range(self.level.size[0]):
-                self.level.set_tile((x, y), wall_tile)
-
-        for corridor in self.corridors:
-            self.carve_corridor(corridor, empty_tile)
-
-        for room in self.rooms.values():
-            self.carve_room(room, empty_tile)
-
-    def carve_room(self, room, empty_tile):
-        for x in range(room.x, room.right):
-            for y in range(room.y, room.bottom):
                 self.level.set_tile((x, y), empty_tile)
 
-    def carve_corridor(self, corridor, empty_tile):
+        for corridor in self.corridors:
+            self.carve_corridor(corridor, wall_tile, empty_tile)
+
+        for room in self.rooms.values():
+            self.carve_room(room, wall_tile, empty_tile)
+
+    def set_tile(self, pos, tile):
+        if pos[0] < 0 or pos[0] >= self.level.size[0]:
+            return
+        if pos[1] < 0 or pos[1] >= self.level.size[1]:
+            return
+
+        self.level.set_tile(pos, tile)
+
+    def carve_room(self, room, wall_tile, empty_tile):
+        for x in range(room.x, room.right):
+            for y in range(room.y, room.bottom):
+                if x == room.x or x == room.right - 1:
+                    tile = wall_tile
+                else:
+                    if y == room.y or y == room.bottom - 1:
+                        tile = wall_tile
+                    else:
+                        tile = empty_tile
+
+                self.set_tile((x, y), tile)
+
+    def carve_corridor(self, corridor, wall_tile, empty_tile):
         for segment in corridor:
             vert_line = (segment[0] == segment[2])
             if vert_line:
                 x = segment[0]
                 for y in range(segment[1], segment[3]):
-                    self.level.set_tile((x, y), empty_tile)
+                    self.set_tile((x - 1, y), wall_tile)
+                    self.set_tile((x + 1, y), wall_tile)
+                    self.set_tile((x, y), empty_tile)
             else:
                 y = segment[0]
                 for x in range(segment[0], segment[2]):
-                    self.level.set_tile((x, y), empty_tile)
+                    self.set_tile((x, y - 1), wall_tile)
+                    self.set_tile((x, y + 1), wall_tile)
+                    self.set_tile((x, y), empty_tile)
 
     def split(self, node, iterations_left, split_vert):
         rect = node.rect
