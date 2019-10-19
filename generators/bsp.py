@@ -25,7 +25,6 @@ class BSPGenerator:
         self.nodes = list()
         self.rooms = dict()
         self.corridors = list()
-        self.corridors = list()
 
         self.do_split()
         self.put_rooms()
@@ -74,15 +73,22 @@ class BSPGenerator:
         corridor = self.gen_corridor_x(room_a, room_b)
         if corridor is not None:
             options.append(corridor)
-
-        # TODO connect rooms if they don't have face-to-face walls
-
         if len(options) == 0:
-            print("no connection!", a.rect, b.rect, room_a, room_b)
-            return
+            corridor = self.gen_corridor_xy(room_a, room_b)
+            options.append(corridor)
 
         corridor = random.choice(options)
         self.corridors.append(corridor)
+
+    def gen_corridor_xy(self, room_a, room_b):
+        x = random.randint(room_a.x, room_a.right)
+        min_y = min(room_a.centery, room_b.centery)
+        max_y = max(room_a.centery, room_b.centery)
+
+        corridor = list()
+        corridor.append((x, min_y, x, max_y))
+        corridor.append((x, max_y, room_b.centerx, max_y))
+        return corridor
 
     def gen_corridor_y(self, room_a, room_b):
         intersect = (
@@ -95,7 +101,7 @@ class BSPGenerator:
         y = random.randint(intersect[0], intersect[1])
 
         corridor = (room_a.centerx, y, room_b.centerx, y)
-        return corridor
+        return [corridor]
 
     def gen_corridor_x(self, room_a, room_b):
         intersect = (
@@ -108,7 +114,7 @@ class BSPGenerator:
         x = random.randint(intersect[0], intersect[1])
 
         corridor = (x, room_a.centery, x, room_b.centery)
-        return corridor
+        return [corridor]
 
     def put_rooms(self, node=None):
         if node is None:
@@ -163,15 +169,16 @@ class BSPGenerator:
                 self.level.set_tile((x, y), empty_tile)
 
     def carve_corridor(self, corridor, empty_tile):
-        vert_line = (corridor[0] == corridor[2])
-        if vert_line:
-            x = corridor[0]
-            for y in range(corridor[1], corridor[3]):
-                self.level.set_tile((x, y), empty_tile)
-        else:
-            y = corridor[0]
-            for x in range(corridor[0], corridor[2]):
-                self.level.set_tile((x, y), empty_tile)
+        for segment in corridor:
+            vert_line = (segment[0] == segment[2])
+            if vert_line:
+                x = segment[0]
+                for y in range(segment[1], segment[3]):
+                    self.level.set_tile((x, y), empty_tile)
+            else:
+                y = segment[0]
+                for x in range(segment[0], segment[2]):
+                    self.level.set_tile((x, y), empty_tile)
 
     def split(self, node, iterations_left, split_vert):
         rect = node.rect
