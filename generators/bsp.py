@@ -1,6 +1,6 @@
 import random
 import pygame
-
+from .bsp_carver import BSPCarver
 
 class TreeNode:
     def __init__(self, rect):
@@ -20,6 +20,7 @@ class BSPGenerator:
         self.level = level
         self.iterations = 5
         self.min_room = (5, 5)
+        self.carver = BSPCarver(self)
 
     def create(self, center_pos):
         self.nodes = list()
@@ -31,12 +32,13 @@ class BSPGenerator:
         self.connect_rooms(self.nodes)
         self.prune_corridors()
 
-        self.make_level()
+        self.carver.make_level()
         # self.text_dump()
 
     def prune_corridors(self):
         i = 0
         while i < len(self.corridors):
+
             i += 1
 
     def connect_rooms(self, node=None):
@@ -83,7 +85,7 @@ class BSPGenerator:
         self.corridors.extend(corridor) 
 
     def gen_corridor_xy(self, room_a, room_b):
-        x = random.randint(room_a.x, room_a.right)
+        x = random.randint(room_a.x, room_a.right - 1)
         min_y = min(room_a.centery, room_b.centery)
         max_y = max(room_a.centery, room_b.centery)
 
@@ -95,7 +97,7 @@ class BSPGenerator:
     def gen_corridor_y(self, room_a, room_b):
         intersect = (
             max(room_a.y, room_b.y) + 1,
-            min(room_a.bottom, room_b.bottom) - 1
+            min(room_a.bottom - 1, room_b.bottom - 1) - 1
         )
         if intersect[0] > intersect[1]:
             return None
@@ -108,7 +110,7 @@ class BSPGenerator:
     def gen_corridor_x(self, room_a, room_b):
         intersect = (
             max(room_a.x, room_b.x) + 1,
-            min(room_a.right, room_b.right) - 1
+            min(room_a.right - 1, room_b.right - 1) - 1
         )
         if intersect[0] > intersect[1]:
             return None
@@ -150,56 +152,6 @@ class BSPGenerator:
         split_vert = random.random() > 0.5
         self.split(node, iterations_left, split_vert)
         self.nodes = node
-
-    def make_level(self):
-        wall_tile = (0, 13)
-        empty_tile = (0, 0)
-
-        for x in range(self.level.size[0]):
-            for y in range(self.level.size[0]):
-                self.level.set_tile((x, y), empty_tile)
-
-        for corridor in self.corridors:
-            self.carve_corridor(corridor, wall_tile, empty_tile)
-
-        for room in self.rooms.values():
-            self.carve_room(room, wall_tile, empty_tile)
-
-    def set_tile(self, pos, tile):
-        if pos[0] < 0 or pos[0] >= self.level.size[0]:
-            return
-        if pos[1] < 0 or pos[1] >= self.level.size[1]:
-            return
-
-        self.level.set_tile(pos, tile)
-
-    def carve_room(self, room, wall_tile, empty_tile):
-        for x in range(room.x, room.right):
-            for y in range(room.y, room.bottom):
-                if x == room.x or x == room.right - 1:
-                    tile = wall_tile
-                else:
-                    if y == room.y or y == room.bottom - 1:
-                        tile = wall_tile
-                    else:
-                        tile = empty_tile
-
-                self.set_tile((x, y), tile)
-
-    def carve_corridor(self, corridor, wall_tile, empty_tile):
-        vert_line = (corridor[0] == corridor[2])
-        if vert_line:
-            x = corridor[0]
-            for y in range(corridor[1], corridor[3]):
-                self.set_tile((x - 1, y), wall_tile)
-                self.set_tile((x + 1, y), wall_tile)
-                self.set_tile((x, y), empty_tile)
-        else:
-            y = corridor[0]
-            for x in range(corridor[0], corridor[2]):
-                self.set_tile((x, y - 1), wall_tile)
-                self.set_tile((x, y + 1), wall_tile)
-                self.set_tile((x, y), empty_tile)
 
     def split(self, node, iterations_left, split_vert):
         rect = node.rect
