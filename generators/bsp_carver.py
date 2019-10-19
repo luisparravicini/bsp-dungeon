@@ -1,5 +1,5 @@
 
-class BSPCarver:
+class Carver:
 
     def __init__(self, generator):
         self.generator = generator
@@ -16,7 +16,7 @@ class BSPCarver:
         for corridor in self.generator.corridors:
             self.carve_corridor(corridor)
 
-        for room in self.generator.rooms.values():
+        for room in self.generator._rooms_dict.values():
             self.carve_room(room)
 
     def set_tile(self, pos, tile):

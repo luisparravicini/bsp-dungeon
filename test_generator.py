@@ -25,7 +25,7 @@ def draw_node(node, surface, scale):
 def draw_rooms(rooms, surface, scale):
     color = (99, 148, 30)
 
-    for room in rooms.values():
+    for room in rooms:
         pygame.draw.rect(surface, color, (
             room.x * scale,
             room.y * scale,
@@ -63,19 +63,23 @@ screen_size = (
 screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
 
+LEVEL_FNAME = 'level.json'
+
+level_generator.create(viewport_pos)
 
 done = False
-needs_gen = True
+needs_draw = True
 n = 0
 auto_create = False
 while not done:
     clock.tick(60)
 
-    if needs_gen or auto_create:
-        needs_gen = False
-        n += 1
-        level_generator.create(viewport_pos)
+    if needs_draw or auto_create:
+        needs_draw = False
         screen.fill(Color('black'))
+        if auto_create:
+            n += 1
+            level_generator.create(viewport_pos)
         draw_node(level_generator.generator.nodes, screen, scale)
         draw_rooms(level_generator.generator.rooms, screen, scale)
         draw_corridors(level_generator.generator.corridors, screen, scale)
@@ -86,8 +90,18 @@ while not done:
         if e.type == QUIT or (e.type == KEYUP and e.key == K_ESCAPE):
             done = 1
             break
+
+        if e.type == KEYUP and e.key == K_s:
+            level_generator.generator.save(LEVEL_FNAME)
+
+        if e.type == KEYUP and e.key == K_l:
+            level_generator.generator.load(LEVEL_FNAME)
+            needs_draw = True
+
         if e.type == KEYUP and e.key == K_g:
-            needs_gen = True
+            n += 1
+            level_generator.create(viewport_pos)
+            needs_draw = True
 
         if e.type == KEYUP and e.key == K_a:
             auto_create = not auto_create

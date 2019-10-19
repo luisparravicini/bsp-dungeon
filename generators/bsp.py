@@ -1,6 +1,7 @@
 import random
 import pygame
-from .bsp_carver import BSPCarver
+from .bsp_carver import Carver
+from .bsp_exporter import Exporter
 
 class TreeNode:
     def __init__(self, rect):
@@ -20,11 +21,12 @@ class BSPGenerator:
         self.level = level
         self.iterations = 5
         self.min_room = (5, 5)
-        self.carver = BSPCarver(self)
+        self.carver = Carver(self)
+        self.exporter = Exporter(self)
 
     def create(self, center_pos):
         self.nodes = list()
-        self.rooms = dict()
+        self._rooms_dict = dict()
         self.corridors = list()
 
         self.do_split()
@@ -33,7 +35,14 @@ class BSPGenerator:
         self.prune_corridors()
 
         self.carver.make_level()
-        # self.text_dump()
+
+        self.rooms = list(self._rooms_dict.values())
+
+    def save(self, path):
+        self.exporter.save(path)
+
+    def load(self, path):
+        self.exporter.load(path)
 
     def prune_corridors(self):
         i = 0
@@ -50,7 +59,7 @@ class BSPGenerator:
 
     def choose_room(self, node):
         if not node.has_children():
-            return self.rooms.get(node, None)
+            return self._rooms_dict.get(node, None)
 
         rooms = list()
         for child in node.children:
@@ -143,7 +152,7 @@ class BSPGenerator:
         room.x += random.randint(1, rect.width - room.width)
         room.y += random.randint(1, rect.height - room.height)
 
-        self.rooms[node] = room
+        self._rooms_dict[node] = room
 
     def do_split(self):
         size = self.level.size
@@ -187,5 +196,5 @@ class BSPGenerator:
         self.text_dump_node(self.nodes, 0)
 
         print("\nrooms")
-        for room in self.rooms:
+        for room in self._rooms_dict:
             print(room)
