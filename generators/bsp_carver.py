@@ -13,11 +13,11 @@ class Carver:
             for y in range(self.generator.level.size[0]):
                 self.generator.level.set_tile((x, y), self.no_tile)
 
-        for corridor in self.generator.corridors:
-            self.carve_corridor(corridor)
-
         for room in self.generator._rooms_dict.values():
             self.carve_room(room)
+
+        for corridor in self.generator.corridors:
+            self.carve_corridor(corridor)
 
     def set_tile(self, pos, tile):
         level = self.generator.level

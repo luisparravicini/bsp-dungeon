@@ -83,10 +83,7 @@ class BSPGenerator:
             pos[0] += delta[0]
             pos[1] += delta[1]
 
-        if delta[0] < 0 or delta[1] < 0:
-            return last_point
-        else:
-            return pos
+        return last_point
 
     def find_room_with(self, pos):
         for r in self._rooms_dict.values():
