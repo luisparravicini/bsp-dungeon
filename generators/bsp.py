@@ -184,17 +184,3 @@ class BSPGenerator:
         if iterations_left > 1:
             self.split(childA, iterations_left - 1, not split_vert)
             self.split(childB, iterations_left - 1, not split_vert)
-
-    def text_dump_node(self, node, level=0):
-        print(" " * level * 4, node.rect)
-        for child in node.children:
-            self.text_dump_node(child, level + 1)
-
-    def text_dump(self):
-        print()
-        print("divisions")
-        self.text_dump_node(self.nodes, 0)
-
-        print("\nrooms")
-        for room in self._rooms_dict:
-            print(room)
