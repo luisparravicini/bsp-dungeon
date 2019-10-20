@@ -15,11 +15,9 @@ def draw_node(node, surface, scale):
 
     rect = node.rect
     pygame.draw.rect(surface, color, (
-        rect.x * scale,
-        rect.y * scale,
-        rect.width * scale,
-        rect.height * scale)
-    , width=1)
+        rect.x * scale, rect.y * scale,
+        rect.width * scale, rect.height * scale),
+        width=1)
 
 
 def draw_rooms(rooms, surface, scale):
@@ -28,17 +26,13 @@ def draw_rooms(rooms, surface, scale):
 
     for room in rooms:
         pygame.draw.rect(surface, color, (
-            room.x * scale,
-            room.y * scale,
-            room.width * scale,
-            room.height * scale)
-        , width=0)
+            room.x * scale, room.y * scale,
+            room.width * scale, room.height * scale),
+            width=0)
         pygame.draw.rect(surface, color_border, (
-            room.x * scale,
-            room.y * scale,
-            room.width * scale,
-            room.height * scale)
-        , width=1)
+            room.x * scale, room.y * scale,
+            room.width * scale, room.height * scale),
+            width=1)
 
 
 def draw_corridors(corridors, surface, scale):
@@ -46,11 +40,9 @@ def draw_corridors(corridors, surface, scale):
 
     for corridor in corridors:
         pygame.draw.line(surface, color, (
-            corridor[0] * scale,
-            corridor[1] * scale),
-            (corridor[2] * scale,
-            corridor[3] * scale)
-        , width=1)
+            corridor[0] * scale, corridor[1] * scale),
+            (corridor[2] * scale, corridor[3] * scale),
+            width=1)
 
 
 level = Level((80, 80), None, None, None)
@@ -72,11 +64,11 @@ clock = pygame.time.Clock()
 
 LEVEL_FNAME = 'level.json'
 
+n = 1
 level_generator.create(viewport_pos)
 
 done = False
 needs_draw = True
-n = 0
 auto_create = False
 while not done:
     clock.tick(60)
