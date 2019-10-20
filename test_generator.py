@@ -24,6 +24,7 @@ def draw_node(node, surface, scale):
 
 def draw_rooms(rooms, surface, scale):
     color = (99, 148, 30)
+    color_border = (150, 200, 80)
 
     for room in rooms:
         pygame.draw.rect(surface, color, (
@@ -32,6 +33,12 @@ def draw_rooms(rooms, surface, scale):
             room.width * scale,
             room.height * scale)
         , width=0)
+        pygame.draw.rect(surface, color_border, (
+            room.x * scale,
+            room.y * scale,
+            room.width * scale,
+            room.height * scale)
+        , width=1)
 
 
 def draw_corridors(corridors, surface, scale):
