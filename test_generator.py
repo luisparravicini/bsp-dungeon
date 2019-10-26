@@ -46,6 +46,13 @@ def draw_corridors(corridors, surface, scale):
             width=1)
 
 
+def dump_stats(start_time, n):
+    end_time = datetime.datetime.now()
+    elapsed = (end_time - start_time).total_seconds()
+    elapsed_one_ms = elapsed * 1000 / n
+    print(f'created {n} dungeons in {elapsed:.0f}s ({elapsed_one_ms:.2f}ms per dungeon)')
+
+
 level = Level((80, 80), None, None, None)
 level_generator = LevelGenerator(level)
 
@@ -98,7 +105,6 @@ while not done:
             needs_draw = True
 
         if e.type == KEYUP and e.key == K_g:
-            n += 1
             level_generator.create(viewport_pos)
             needs_draw = True
 
@@ -108,9 +114,8 @@ while not done:
                 n = 0
                 start_time = datetime.datetime.now()
             else:
-                end_time = datetime.datetime.now()
-                elapsed = (end_time - start_time).total_seconds()
-                elapsed_one_ms = elapsed * 1000 / n
-                print(f'created {n} dungeons in {elapsed:.0f}s ({elapsed_one_ms:.2f}ms per dungeon)')
+                dump_stats(start_time, n)
 
-print('created', n, 'dungeons')
+if auto_create:
+    dump_stats(start_time, n)
+
