@@ -6,8 +6,6 @@ class CorridorPruner:
         self.generator = generator
 
     def prune(self):
-        return
-
         # new_corridors = list()
         # for corridor in self.generator.corridors:
         #     segments = self.segmentize_corridor(corridor)
