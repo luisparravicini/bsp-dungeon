@@ -30,12 +30,12 @@ class Carver:
         level.set_tile(pos, tile)
 
     def carve_room(self, room):
-        for x in range(room.x, room.right):
-            for y in range(room.y, room.bottom):
-                if x == room.x or x == room.right - 1:
+        for x in range(room.x - 1, room.right):
+            for y in range(room.y - 1, room.bottom):
+                if x == room.x - 1 or x == room.right - 1:
                     tile = self.wall_tile
                 else:
-                    if y == room.y or y == room.bottom - 1:
+                    if y == room.y - 1 or y == room.bottom - 1:
                         tile = self.wall_tile
                     else:
                         tile = self.empty_tile
