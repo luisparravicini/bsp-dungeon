@@ -5,6 +5,7 @@ from level import Level
 from level_generator import LevelGenerator
 import pygame
 from pygame.locals import *
+import datetime
 
 
 def draw_node(node, surface, scale):
@@ -64,7 +65,6 @@ clock = pygame.time.Clock()
 
 LEVEL_FNAME = 'level.json'
 
-n = 1
 level_generator.create(viewport_pos)
 
 done = False
@@ -104,5 +104,13 @@ while not done:
 
         if e.type == KEYUP and e.key == K_a:
             auto_create = not auto_create
+            if auto_create:
+                n = 0
+                start_time = datetime.datetime.now()
+            else:
+                end_time = datetime.datetime.now()
+                elapsed = (end_time - start_time).total_seconds()
+                elapsed_one_ms = elapsed * 1000 / n
+                print(f'created {n} dungeons in {elapsed:.0f}s ({elapsed_one_ms:.2f}ms per dungeon)')
 
 print('created', n, 'dungeons')
