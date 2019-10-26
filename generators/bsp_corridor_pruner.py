@@ -32,12 +32,35 @@ class CorridorPruner:
                 corridor[3] = end_pos[1]
 
     def check_dead_ends(self):
+        dead_ends = set()
         for corridor in self.generator.corridors:
-            ends = ((corridor[0], corridor[1]), (corridor[2], corridor[3]))
-            for pos in ends:
+            for pos in self._corridor_ends(corridor):
                 r = self._find_room_with(pos)
                 if r is None:
-                    print(f'no room for {pos}')
+                    connected = self._has_corridor_at(corridor, pos)
+                    if not connected:
+                        dead_ends.add(pos)
+
+        print(f'dead ends: {dead_ends}')
+
+    def _has_corridor_at(self, this_corridor, pos):
+        found = False
+
+        for corridor in self.generator.corridors:
+            if corridor == this_corridor:
+                continue
+
+            for corridor_pos in self._corridor_ends(corridor):
+                if corridor_pos == pos:
+                    found = True
+
+            if found:
+                break
+
+        return found
+
+    def _corridor_ends(self, corridor):
+        return ((corridor[0], corridor[1]), (corridor[2], corridor[3]))
 
     def segmentize_corridor(self, corridor):
         segments = list()
