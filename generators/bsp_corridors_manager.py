@@ -35,12 +35,14 @@ class CorridorsManager:
             return
 
         options = list()
+
         corridor = self._gen_corridor_y(room_a, room_b)
         if corridor is not None:
             options.append(corridor)
         corridor = self._gen_corridor_x(room_a, room_b)
         if corridor is not None:
             options.append(corridor)
+
         if len(options) == 0:
             corridor = self._gen_corridor_xy(room_a, room_b)
             options.append(corridor)
@@ -55,7 +57,8 @@ class CorridorsManager:
 
         corridor = list()
         corridor.append([x, min_y, x, max_y])
-        corridor.append([x, max_y, room_b.centerx, max_y])
+        b_centery = room_b.centery
+        corridor.append([x, b_centery, room_b.centerx, b_centery])
         return corridor
 
     def _gen_corridor_y(self, room_a, room_b):

@@ -41,7 +41,8 @@ class CorridorPruner:
                     if not connected:
                         dead_ends.add(pos)
 
-        print(f'dead ends: {dead_ends}')
+        if len(dead_ends) > 0:
+            print(f'dead ends: {dead_ends}')
         return dead_ends
 
     def _has_corridor_at(self, this_corridor, pos):
