@@ -3,6 +3,7 @@ import pygame
 from .bsp_carver import Carver
 from .bsp_exporter import Exporter
 from .bsp_corridor_pruner import CorridorPruner
+from .bsp_corridors_manager import CorridorsManager
 
 
 class TreeNode:
@@ -26,6 +27,7 @@ class BSPGenerator:
         self.carver = Carver(self)
         self.exporter = Exporter(self)
         self.corridor_pruner = CorridorPruner(self)
+        self.corridor_manager = CorridorsManager(self)
 
     def create(self, center_pos):
         self.nodes = list()
@@ -34,8 +36,9 @@ class BSPGenerator:
 
         self.do_split()
         self.put_rooms()
-        self.connect_rooms(self.nodes)
+        self.corridor_manager.connect_rooms(self.nodes)
         self.corridor_pruner.prune()
+        self.corridor_pruner.check_dead_ends()
 
         self.carver.make_level()
 
@@ -46,85 +49,6 @@ class BSPGenerator:
 
     def load(self, path):
         self.exporter.load(path)
-
-    def connect_rooms(self, node=None):
-        for child in node.children:
-            self.connect_rooms(child)
-
-        if node.has_children():
-            self.connect_children(*node.children)
-
-    def choose_room(self, node):
-        if not node.has_children():
-            return self._rooms_dict.get(node, None)
-
-        rooms = list()
-        for child in node.children:
-            r = self.choose_room(child)
-            if r is not None:
-                rooms.append(r)
-
-        if len(rooms) > 0:
-            return random.choice(rooms)
-
-        return None
-
-    def connect_children(self, a, b):
-        room_a = self.choose_room(a)
-        room_b = self.choose_room(b)
-
-        if room_a is None or room_b is None:
-            return
-
-        options = list()
-        corridor = self.gen_corridor_y(room_a, room_b)
-        if corridor is not None:
-            options.append(corridor)
-        corridor = self.gen_corridor_x(room_a, room_b)
-        if corridor is not None:
-            options.append(corridor)
-        if len(options) == 0:
-            corridor = self.gen_corridor_xy(room_a, room_b)
-            options.append(corridor)
-
-        corridor = random.choice(options)
-        self.corridors.extend(corridor)
-
-    def gen_corridor_xy(self, room_a, room_b):
-        x = random.randint(room_a.x, room_a.right - 1)
-        min_y = min(room_a.centery, room_b.centery)
-        max_y = max(room_a.centery, room_b.centery)
-
-        corridor = list()
-        corridor.append([x, min_y, x, max_y])
-        corridor.append([x, max_y, room_b.centerx, max_y])
-        return corridor
-
-    def gen_corridor_y(self, room_a, room_b):
-        intersect = (
-            max(room_a.y, room_b.y) + 1,
-            min(room_a.bottom - 1, room_b.bottom - 1) - 1
-        )
-        if intersect[0] > intersect[1]:
-            return None
-
-        y = random.randint(intersect[0], intersect[1])
-
-        corridor = [room_a.centerx, y, room_b.centerx, y]
-        return [corridor]
-
-    def gen_corridor_x(self, room_a, room_b):
-        intersect = (
-            max(room_a.x, room_b.x) + 1,
-            min(room_a.right - 1, room_b.right - 1) - 1
-        )
-        if intersect[0] > intersect[1]:
-            return None
-
-        x = random.randint(intersect[0], intersect[1])
-
-        corridor = [x, room_a.centery, x, room_b.centery]
-        return [corridor]
 
     def put_rooms(self, node=None):
         if node is None:

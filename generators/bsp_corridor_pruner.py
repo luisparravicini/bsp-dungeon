@@ -6,6 +6,8 @@ class CorridorPruner:
         self.generator = generator
 
     def prune(self):
+        return
+
         # new_corridors = list()
         # for corridor in self.generator.corridors:
         #     segments = self.segmentize_corridor(corridor)
@@ -28,6 +30,14 @@ class CorridorPruner:
             if end_pos is not None:
                 corridor[2] = end_pos[0]
                 corridor[3] = end_pos[1]
+
+    def check_dead_ends(self):
+        for corridor in self.generator.corridors:
+            ends = ((corridor[0], corridor[1]), (corridor[2], corridor[3]))
+            for pos in ends:
+                r = self._find_room_with(pos)
+                if r is None:
+                    print(f'no room for {pos}')
 
     def segmentize_corridor(self, corridor):
         segments = list()
