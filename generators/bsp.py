@@ -38,7 +38,7 @@ class BSPGenerator:
         self.put_rooms()
         self.corridor_manager.connect_rooms(self.nodes)
         self.corridor_pruner.prune()
-        self.corridor_pruner.check_dead_ends()
+        self.dead_ends = self.corridor_pruner.check_dead_ends()
 
         self.carver.make_level()
 

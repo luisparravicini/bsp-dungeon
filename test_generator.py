@@ -46,6 +46,16 @@ def draw_corridors(corridors, surface, scale):
             width=1)
 
 
+def draw_dead_ends(dead_ends, surface, scale):
+    color = Color('red')
+    r = 1
+
+    for dead_end in dead_ends:
+        pygame.draw.circle(surface, color, (
+            dead_end[0] * scale, dead_end[1] * scale),
+            r * scale,
+            width=1)
+
 def dump_stats(start_time, n):
     end_time = datetime.datetime.now()
     elapsed = (end_time - start_time).total_seconds()
@@ -89,6 +99,7 @@ while not done:
         draw_node(level_generator.generator.nodes, screen, scale)
         draw_rooms(level_generator.generator.rooms, screen, scale)
         draw_corridors(level_generator.generator.corridors, screen, scale)
+        draw_dead_ends(level_generator.generator.dead_ends, screen, scale)
 
     pygame.display.update()
 
