@@ -6,6 +6,7 @@ from level_generator import LevelGenerator
 import pygame
 from pygame.locals import *
 import datetime
+from generators import DungeonValidator
 
 
 def draw_node(node, surface, scale):
@@ -65,6 +66,7 @@ def dump_stats(start_time, n):
 
 level = Level((80, 80), None, None, None)
 level_generator = LevelGenerator(level)
+validator = DungeonValidator(level_generator.generator)
 
 viewport_pos = (
     int(level.size[0] / 2 - conf.ROOM_SIZE[0] / 2),
@@ -96,10 +98,13 @@ while not done:
         if auto_create:
             n += 1
             level_generator.create(viewport_pos)
+            if not validator.validates():
+                auto_create = False
+                print("dungeon doesn't validates!")
         draw_node(level_generator.generator.nodes, screen, scale)
         draw_rooms(level_generator.generator.rooms, screen, scale)
         draw_corridors(level_generator.generator.corridors, screen, scale)
-        draw_dead_ends(level_generator.generator.dead_ends, screen, scale)
+        draw_dead_ends(validator.dead_ends, screen, scale)
 
     pygame.display.update()
 

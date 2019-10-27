@@ -6,14 +6,14 @@ class CorridorPruner:
         self.generator = generator
 
     def prune(self):
-        # new_corridors = list()
-        # for corridor in self.generator.corridors:
-        #     segments = self.segmentize_corridor(corridor)
-        #     if segments is None:
-        #         new_corridors.append(corridor)
-        #     else:
-        #         new_corridors.extend(segments)
-        # self.generator.corridors = new_corridors
+        new_corridors = list()
+        for corridor in self.generator.corridors:
+            segments = self._segmentize_corridor(corridor)
+            if segments is None:
+                new_corridors.append(corridor)
+            else:
+                new_corridors.extend(segments)
+        self.generator.corridors = new_corridors
 
         for corridor in self.generator.corridors:
             start_pos = (corridor[0], corridor[1])
@@ -29,40 +29,7 @@ class CorridorPruner:
                 corridor[2] = end_pos[0]
                 corridor[3] = end_pos[1]
 
-    def check_dead_ends(self):
-        dead_ends = set()
-        for corridor in self.generator.corridors:
-            for pos in self._corridor_ends(corridor):
-                r = self._find_room_with(pos)
-                if r is None:
-                    connected = self._has_corridor_at(corridor, pos)
-                    if not connected:
-                        dead_ends.add(pos)
-
-        if len(dead_ends) > 0:
-            print(f'dead ends: {dead_ends}')
-        return dead_ends
-
-    def _has_corridor_at(self, this_corridor, pos):
-        found = False
-
-        for corridor in self.generator.corridors:
-            if corridor == this_corridor:
-                continue
-
-            for corridor_pos in self._corridor_ends(corridor):
-                if corridor_pos == pos:
-                    found = True
-
-            if found:
-                break
-
-        return found
-
-    def _corridor_ends(self, corridor):
-        return ((corridor[0], corridor[1]), (corridor[2], corridor[3]))
-
-    def segmentize_corridor(self, corridor):
+    def _segmentize_corridor(self, corridor):
         segments = list()
 
         start_pos = [corridor[0], corridor[1]]
@@ -126,7 +93,11 @@ class CorridorPruner:
         return last_pos
 
     def _find_room_with(self, pos):
-        for r in self.generator._rooms_dict.values():
+        return CorridorPruner.find_room_with(pos, self.generator._rooms_dict)
+
+    @staticmethod
+    def find_room_with(pos, rooms):
+        for r in rooms.values():
             if r.collidepoint(pos):
                 return r
         return None
