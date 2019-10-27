@@ -2,6 +2,7 @@ import spritesheet
 import pygame
 import conf
 
+
 class SpritesheetManager:
     def __init__(self, path):
         self.sheet = spritesheet.spritesheet('tiles-color.png')

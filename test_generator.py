@@ -41,10 +41,26 @@ def draw_corridors(corridors, surface, scale):
     color = Color('green')
 
     for corridor in corridors:
-        pygame.draw.line(surface, color, (
-            corridor[0] * scale, corridor[1] * scale),
-            (corridor[2] * scale, corridor[3] * scale),
+        vert_line = (corridor[0] == corridor[2])
+        if vert_line:
+            delta = (0.5, 0)
+        else:
+            delta = (0, 0.5)
+
+        pygame.draw.line(surface, Color('green'),
+            ((corridor[0] - delta[0]) * scale, (corridor[1] - delta[1]) * scale),
+            ((corridor[2] - delta[0]) * scale, (corridor[3] - delta[1]) * scale),
             width=1)
+        pygame.draw.line(surface, Color('green'),
+            ((corridor[0] + delta[0]) * scale, (corridor[1] + delta[1]) * scale),
+            ((corridor[2] + delta[0]) * scale, (corridor[3] + delta[1]) * scale),
+            width=1)
+
+
+        # pygame.draw.line(surface, Color('yellow'), (
+        #     corridor[0] * scale, corridor[1] * scale),
+        #     (corridor[2] * scale, corridor[3] * scale),
+        #     width=1)
 
 
 def draw_dead_ends(dead_ends, surface, scale):
@@ -64,26 +80,23 @@ def dump_stats(start_time, n):
     print(f'created {n} dungeons in {elapsed:.0f}s ({elapsed_one_ms:.2f}ms per dungeon)')
 
 
-level = Level((80, 80), None, None, None)
-level_generator = LevelGenerator(level)
-validator = DungeonValidator(level_generator.generator)
-
-viewport_pos = (
-    int(level.size[0] / 2 - conf.ROOM_SIZE[0] / 2),
-    int(level.size[1] / 2 - conf.ROOM_SIZE[1] / 2),
+scale = 7
+size = (80, 80)
+screen_size = (
+    size[0] * scale,
+    size[1] * scale
 )
 
 pygame.init()
-scale = 7
-screen_size = (
-    level.size[0] * scale,
-    level.size[1] * scale
-)
 screen = pygame.display.set_mode(screen_size)
+level = Level(size, None, None, None)
+level_generator = LevelGenerator(level)
+validator = DungeonValidator(level_generator.generator)
 clock = pygame.time.Clock()
 
 LEVEL_FNAME = 'level.json'
 
+viewport_pos = (0, 0)
 level_generator.create(viewport_pos)
 
 done = False
