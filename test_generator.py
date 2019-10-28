@@ -48,8 +48,8 @@ def draw_corridors(corridors, surface, scale):
             delta = (0, 0.5)
 
         pygame.draw.line(surface, Color('green'),
-            ((corridor[0] - delta[0]) * scale, (corridor[1] - delta[1]) * scale),
-            ((corridor[2] - delta[0]) * scale, (corridor[3] - delta[1]) * scale),
+            (corridor[0] * scale, corridor[1] * scale),
+            (corridor[2] * scale, corridor[3] * scale),
             width=1)
         pygame.draw.line(surface, Color('green'),
             ((corridor[0] + delta[0]) * scale, (corridor[1] + delta[1]) * scale),
@@ -69,9 +69,10 @@ def draw_dead_ends(dead_ends, surface, scale):
 
     for dead_end in dead_ends:
         pygame.draw.circle(surface, color, (
-            dead_end[0] * scale, dead_end[1] * scale),
+            (dead_end[0] + 0.25) * scale, (dead_end[1] + 0.25) * scale),
             r * scale,
             width=1)
+
 
 def dump_stats(start_time, n):
     end_time = datetime.datetime.now()
