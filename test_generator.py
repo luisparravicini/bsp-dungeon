@@ -26,42 +26,20 @@ def draw_node(node, surface, scale):
         width=1)
 
 
-def draw_rooms(rooms, surface, scale):
+def draw_level(level, carver, surface, scale):
     global wall_color, floor_color
 
-    for room in rooms:
-        pygame.draw.rect(surface, wall_color, (
-            room.x * scale, room.y * scale,
-            room.width * scale, room.height * scale),
-            width=0)
-        pygame.draw.rect(surface, floor_color, (
-            (room.x + 1) * scale, (room.y + 1) * scale,
-            (room.width - 2) * scale, (room.height - 2) * scale),
-            width=0)
-
-
-def draw_corridors(corridors, surface, scale):
-    global wall_color, floor_color
-
-    for corridor in corridors:
-        vert_line = (corridor[0] == corridor[2])
-        if vert_line:
-            delta = (1, 0)
-        else:
-            delta = (0, 1)
-
-        width = abs(corridor[2] - corridor[0]) + 1
-        height = abs(corridor[3] - corridor[1]) + 1
-
-        pygame.draw.rect(surface, wall_color,
-            ((corridor[0] - delta[0]) * scale, (corridor[1] - delta[1]) * scale,
-            (width + delta[0]*2) * scale, (height + delta[1]*2) * scale),
-            width=0)
-
-        pygame.draw.rect(surface, floor_color,
-            (corridor[0] * scale, corridor[1] * scale,
-            width * scale, height * scale),
-            width=0)
+    for x in range(level.size[0]):
+        for y in range(level.size[1]):
+            tile = level.tile_at((x, y))
+            if tile == carver.wall_tile:
+                pygame.draw.rect(surface, wall_color,
+                    (x * scale, y * scale, scale, scale),
+                    width=0)
+            elif tile == carver.empty_tile:
+                pygame.draw.rect(surface, floor_color,
+                    (x * scale, y * scale, scale, scale),
+                    width=0)
 
 
 def draw_errors(dead_ends, surface, scale):
@@ -117,8 +95,7 @@ while not done:
                 auto_create = False
                 print("dungeon doesn't validates!")
         draw_node(level_generator.generator.nodes, screen, scale)
-        draw_rooms(level_generator.generator.rooms, screen, scale)
-        draw_corridors(level_generator.generator.corridors, screen, scale)
+        draw_level(level, level_generator.generator.carver, screen, scale)
         draw_errors(validator.errors, screen, scale)
 
     pygame.display.update()
