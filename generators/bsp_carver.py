@@ -51,7 +51,7 @@ class Carver:
                 self.set_tile((x + 1, y), self.wall_tile)
                 self.set_tile((x, y), self.empty_tile)
         else:
-            y = corridor[0]
+            y = corridor[1]
             for x in range(corridor[0], corridor[2] + 1):
                 self.set_tile((x, y - 1), self.wall_tile)
                 self.set_tile((x, y + 1), self.wall_tile)
