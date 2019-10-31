@@ -7,7 +7,7 @@ There are two scripts you can run:
 
 `test.py` which uses tiles from Kenney's [1-bit pack](https://www.kenney.nl/assets/bit-pack) and lets you walk with a character inside the dungeons. Keys:
 
-* Move with `up`, `down`, `left`, `right`
+* Move with `up`, `down`, `left`, `right`.
 * `d` to toggle debug info.
 
 ![](test.png)
@@ -15,9 +15,9 @@ There are two scripts you can run:
 
 `test_generator.py`: Creates the dungeon and shows a blueprint and the partitions from the BSP. Keys:
 
-* `l` Loads the dungeon from `level.json`
-* `s` Save the dungeon to `level.json`
-* `g` Creates a new dungeon
-* `a` Toggles the option to create one dungeon after another
+* `l` Loads the dungeon from `level.json`.
+* `s` Save the dungeon to `level.json`.
+* `g` Creates a new dungeon.
+* `a` Toggles the option to create one dungeon after another. If the dungeon doesn't meet certain requeriments, it stops and marks each error encountered with a red circle in the level.
 
 ![](blueprint.png)
