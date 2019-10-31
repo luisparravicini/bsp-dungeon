@@ -4,10 +4,12 @@ from .bsp_corridor_pruner import CorridorPruner
 class DungeonValidator:
     def __init__(self, generator):
         self.generator = generator
-        self.dead_ends = set()
+        self.errors = set()
 
     def validates(self):
-        return self._check_dead_ends()
+        self.errors.clear()
+        valid = self._check_dead_ends()
+        return valid
 
     def _check_dead_ends(self):
         dead_ends = set()
@@ -23,7 +25,8 @@ class DungeonValidator:
         if not valid:
             print(f'dead ends: {dead_ends}')
 
-        self.dead_ends = dead_ends
+        self.errors.update(dead_ends)
+
         return valid
 
     def _has_corridor_at(self, this_corridor, pos):
