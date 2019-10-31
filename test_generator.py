@@ -9,6 +9,10 @@ import datetime
 from generators import DungeonValidator
 
 
+floor_color = (40, 40, 40)
+wall_color = (100, 150, 30)
+
+
 def draw_node(node, surface, scale):
     color = (100, 100, 100)
 
@@ -23,53 +27,50 @@ def draw_node(node, surface, scale):
 
 
 def draw_rooms(rooms, surface, scale):
-    color = (99, 148, 30)
-    color_border = (150, 200, 80)
+    global wall_color, floor_color
 
     for room in rooms:
-        pygame.draw.rect(surface, color, (
+        pygame.draw.rect(surface, wall_color, (
             room.x * scale, room.y * scale,
             room.width * scale, room.height * scale),
             width=0)
-        pygame.draw.rect(surface, color_border, (
-            room.x * scale, room.y * scale,
-            room.width * scale, room.height * scale),
-            width=1)
+        pygame.draw.rect(surface, floor_color, (
+            (room.x + 1) * scale, (room.y + 1) * scale,
+            (room.width - 2) * scale, (room.height - 2) * scale),
+            width=0)
 
 
 def draw_corridors(corridors, surface, scale):
-    color = Color('green')
+    global wall_color, floor_color
 
     for corridor in corridors:
         vert_line = (corridor[0] == corridor[2])
         if vert_line:
-            delta = (0.5, 0)
+            delta = (1, 0)
         else:
-            delta = (0, 0.5)
+            delta = (0, 1)
 
-        pygame.draw.line(surface, Color('green'),
-            (corridor[0] * scale, corridor[1] * scale),
-            (corridor[2] * scale, corridor[3] * scale),
-            width=1)
-        pygame.draw.line(surface, Color('green'),
-            ((corridor[0] + delta[0]) * scale, (corridor[1] + delta[1]) * scale),
-            ((corridor[2] + delta[0]) * scale, (corridor[3] + delta[1]) * scale),
-            width=1)
+        width = abs(corridor[2] - corridor[0]) + 1
+        height = abs(corridor[3] - corridor[1]) + 1
 
+        pygame.draw.rect(surface, wall_color,
+            ((corridor[0] - delta[0]) * scale, (corridor[1] - delta[1]) * scale,
+            (width + delta[0]*2) * scale, (height + delta[1]*2) * scale),
+            width=0)
 
-        # pygame.draw.line(surface, Color('yellow'), (
-        #     corridor[0] * scale, corridor[1] * scale),
-        #     (corridor[2] * scale, corridor[3] * scale),
-        #     width=1)
+        pygame.draw.rect(surface, floor_color,
+            (corridor[0] * scale, corridor[1] * scale,
+            width * scale, height * scale),
+            width=0)
 
 
 def draw_errors(dead_ends, surface, scale):
     color = Color('red')
-    r = 1
+    r = 1.5
 
     for dead_end in dead_ends:
         pygame.draw.circle(surface, color, (
-            (dead_end[0] + 0.25) * scale, (dead_end[1] + 0.25) * scale),
+            (dead_end[0] + 0.5) * scale, (dead_end[1] + 0.5) * scale),
             r * scale,
             width=1)
 
