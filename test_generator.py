@@ -82,21 +82,24 @@ level_generator.create(viewport_pos)
 done = False
 needs_draw = True
 auto_create = False
+n = 0
 while not done:
     clock.tick(60)
 
     if needs_draw or auto_create:
         needs_draw = False
-        screen.fill(Color('black'))
         if auto_create:
             n += 1
             level_generator.create(viewport_pos)
-            if not validator.validates():
+            valid = validator.validates()
+            if not valid:
                 auto_create = False
                 print("dungeon doesn't validates!")
-        draw_node(level_generator.generator.nodes, screen, scale)
-        draw_level(level, level_generator.generator.carver, screen, scale)
-        draw_errors(validator.errors, screen, scale)
+        if n % 25 == 0 or not valid or needs_draw:
+            screen.fill(Color('black'))
+            draw_node(level_generator.generator.nodes, screen, scale)
+            draw_level(level, level_generator.generator.carver, screen, scale)
+            draw_errors(validator.errors, screen, scale)
 
     pygame.display.update()
 
@@ -122,6 +125,7 @@ while not done:
                 n = 0
                 start_time = datetime.datetime.now()
             else:
+                needs_draw = True
                 dump_stats(start_time, n)
 
 if auto_create:
