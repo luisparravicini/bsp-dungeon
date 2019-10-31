@@ -64,9 +64,6 @@ def draw_corridors(corridors, surface, scale):
             width=0)
 
 
-def draw_level(level, screen, scale):
-    pass
-
 def draw_errors(dead_ends, surface, scale):
     color = Color('red')
     r = 1.5
@@ -123,7 +120,6 @@ while not done:
         draw_rooms(level_generator.generator.rooms, screen, scale)
         draw_corridors(level_generator.generator.corridors, screen, scale)
         draw_errors(validator.errors, screen, scale)
-        draw_level(level, screen, scale)
 
     pygame.display.update()
 
