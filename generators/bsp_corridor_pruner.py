@@ -24,10 +24,10 @@ class CorridorPruner:
                 corridor[0] = start_pos[0]
                 corridor[1] = start_pos[1]
 
-            end_pos = self.adjust_corridor_border(end_pos, start_pos)
-            if end_pos is not None:
-                corridor[2] = end_pos[0]
-                corridor[3] = end_pos[1]
+            pos = self.adjust_corridor_border(end_pos, start_pos)
+            if pos is not None:
+                corridor[2] = pos[0]
+                corridor[3] = pos[1]
 
     def _segmentize_corridor(self, corridor):
         segments = list()
