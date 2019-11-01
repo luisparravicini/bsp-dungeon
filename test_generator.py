@@ -42,6 +42,14 @@ def draw_level(level, carver, surface, scale):
                     width=0)
 
 
+def draw_selected_pos(pos, surface, scale):
+    if pos is not None:
+        color = (240, 154, 0, 128)
+        pygame.draw.rect(surface, color,
+            (pos[0] * scale, pos[1] * scale, scale, scale),
+            width=0)
+
+
 def draw_errors(dead_ends, surface, scale):
     color = Color('red')
     r = 1.5
@@ -83,6 +91,7 @@ done = False
 needs_draw = True
 auto_create = False
 n = 0
+selected_level_pos = None
 while not done:
     clock.tick(60)
 
@@ -100,6 +109,7 @@ while not done:
             draw_node(level_generator.generator.nodes, screen, scale)
             draw_level(level, level_generator.generator.carver, screen, scale)
             draw_errors(validator.errors, screen, scale)
+            draw_selected_pos(selected_level_pos, screen, scale)
 
     pygame.display.update()
 
@@ -127,6 +137,11 @@ while not done:
             else:
                 needs_draw = True
                 dump_stats(start_time, n)
+
+        if e.type == MOUSEMOTION:
+            selected_level_pos = (e.pos[0] // scale, e.pos[1] // scale)
+            print('level pos:', selected_level_pos)
+            needs_draw = True
 
 if auto_create:
     dump_stats(start_time, n)

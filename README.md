@@ -19,5 +19,6 @@ There are two scripts you can run:
 * `s` Save the dungeon to `level.json`.
 * `g` Creates a new dungeon.
 * `a` Toggles the option to create one dungeon after another. If the dungeon doesn't meet certain requeriments, it stops and marks each error encountered with a red circle in the level.
+* `mouse` Shows which tile is selected by the mouse.
 
 ![](blueprint.png)
