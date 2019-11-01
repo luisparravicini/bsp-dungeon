@@ -91,7 +91,7 @@ done = False
 needs_draw = True
 auto_create = False
 n = 0
-selected_level_pos = None
+selected_level_pos = last_level_pos = None
 while not done:
     clock.tick(60)
 
@@ -140,8 +140,10 @@ while not done:
 
         if e.type == MOUSEMOTION:
             selected_level_pos = (e.pos[0] // scale, e.pos[1] // scale)
-            print('level pos:', selected_level_pos)
-            needs_draw = True
+            if (last_level_pos != selected_level_pos):
+                last_level_pos = tuple(selected_level_pos)
+                print('level pos:', selected_level_pos)
+                needs_draw = True
 
 if auto_create:
     dump_stats(start_time, n)
