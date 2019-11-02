@@ -29,6 +29,11 @@ class Carver:
 
         level.set_tile(pos, tile)
 
+    def set_tile_if_not_empty(self, pos):
+        tile = self.generator.level.tile_at(pos)
+        if tile != self.empty_tile:
+            self.set_tile(pos, self.wall_tile)
+
     def carve_room(self, room):
         for x in range(room.x, room.right):
             for y in range(room.y, room.bottom):
@@ -47,12 +52,12 @@ class Carver:
         if vert_line:
             x = corridor[0]
             for y in range(corridor[1], corridor[3] + 1):
-                self.set_tile((x - 1, y), self.wall_tile)
-                self.set_tile((x + 1, y), self.wall_tile)
+                self.set_tile_if_not_empty((x - 1, y))
+                self.set_tile_if_not_empty((x + 1, y))
                 self.set_tile((x, y), self.empty_tile)
         else:
             y = corridor[1]
             for x in range(corridor[0], corridor[2] + 1):
-                self.set_tile((x, y - 1), self.wall_tile)
-                self.set_tile((x, y + 1), self.wall_tile)
+                self.set_tile_if_not_empty((x, y - 1))
+                self.set_tile_if_not_empty((x, y + 1))
                 self.set_tile((x, y), self.empty_tile)
