@@ -20,11 +20,11 @@ class BSPGenerator:
         Based on
         http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
     """
-    def __init__(self, level):
+    def __init__(self, level, no_tile_pos):
         self.level = level
         self.iterations = 5
         self.min_room = (5, 5)
-        self.carver = Carver(self)
+        self.carver = Carver(self, no_tile_pos)
         self.exporter = Exporter(self)
         self.corridor_pruner = CorridorPruner(self)
         self.corridor_manager = CorridorsManager(self)

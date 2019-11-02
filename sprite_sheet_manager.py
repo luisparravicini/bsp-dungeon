@@ -9,9 +9,15 @@ class SpritesheetManager:
         size = tuple(v * conf.SCALE for v in self.sheet.sheet.get_size())
         self.sheet.sheet = pygame.transform.scale(self.sheet.sheet, size)
 
+        self.empty_tile = pygame.Surface((conf.TILE_SIZE, conf.TILE_SIZE))
+        self.empty_tile.fill(pygame.Color('black'))
+
     def blit_tile_at(self, surface, surface_pos, tile_pos):
-        tile_rect = self._tile_rect_at(tile_pos)
-        surface.blit(self.sheet.sheet, surface_pos, area=tile_rect)
+        if tile_pos == conf.NO_TILE_POS:
+            surface.blit(self.empty_tile, surface_pos)
+        else:
+            tile_rect = self._tile_rect_at(tile_pos)
+            surface.blit(self.sheet.sheet, surface_pos, area=tile_rect)
 
     def _tile_rect_at(self, pos):
         cell_size = conf.TILE_SIZE + 1 * conf.SCALE

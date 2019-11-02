@@ -1,11 +1,11 @@
 
 class Carver:
 
-    def __init__(self, generator):
+    def __init__(self, generator, no_tile_pos):
         self.generator = generator
         self.wall_tile = (0, 13)
         self.empty_tile = (0, 0)
-        self.no_tile = (5, 5)
+        self.no_tile = no_tile_pos
 
     def make_level(self):
 
