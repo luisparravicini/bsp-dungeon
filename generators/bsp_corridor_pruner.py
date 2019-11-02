@@ -6,14 +6,14 @@ class CorridorPruner:
         self.generator = generator
 
     def prune(self):
-        # new_corridors = list()
-        # for corridor in self.generator.corridors:
-        #     segments = self._segmentize_corridor(corridor)
-        #     if segments is None:
-        #         new_corridors.append(corridor)
-        #     else:
-        #         new_corridors.extend(segments)
-        # self.generator.corridors = new_corridors
+        new_corridors = list()
+        for corridor in self.generator.corridors:
+            segments = self._segmentize_corridor(corridor)
+            if segments is None:
+                new_corridors.append(corridor)
+            else:
+                new_corridors.extend(segments)
+        self.generator.corridors = new_corridors
 
         for corridor in self.generator.corridors:
             start_pos = (corridor[0], corridor[1])

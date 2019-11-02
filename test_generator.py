@@ -50,15 +50,14 @@ def draw_selected_pos(pos, surface, scale):
             width=0)
 
 
-def draw_errors(dead_ends, surface, scale):
-    color = Color('red')
+def draw_errors(errors, surface, scale, color):
     r = 1.5
 
-    for dead_end in dead_ends:
+    for dead_end in errors:
         pygame.draw.circle(surface, color, (
             (dead_end[0] + 0.5) * scale, (dead_end[1] + 0.5) * scale),
             r * scale,
-            width=1)
+            width=2)
 
 
 def dump_stats(start_time, n):
@@ -66,6 +65,11 @@ def dump_stats(start_time, n):
     elapsed = (end_time - start_time).total_seconds()
     elapsed_one_ms = elapsed * 1000 / n
     print(f'created {n} dungeons in {elapsed:.0f}s ({elapsed_one_ms:.2f}ms per dungeon)')
+
+
+def generate(level_generator, viewport_pos):
+    level_generator.create(viewport_pos)
+    return validator.validates()
 
 
 scale = 7
@@ -85,7 +89,7 @@ clock = pygame.time.Clock()
 LEVEL_FNAME = 'level.json'
 
 viewport_pos = (0, 0)
-level_generator.create(viewport_pos)
+valid = generate(level_generator, viewport_pos)
 
 done = False
 needs_draw = True
@@ -99,8 +103,7 @@ while not done:
         needs_draw = False
         if auto_create:
             n += 1
-            level_generator.create(viewport_pos)
-            valid = validator.validates()
+            valid = generate(level_generator, viewport_pos)
             if not valid:
                 auto_create = False
                 print("dungeon doesn't validates!")
@@ -108,7 +111,8 @@ while not done:
             screen.fill(Color('black'))
             draw_node(level_generator.generator.nodes, screen, scale)
             draw_level(level, level_generator.generator.carver, screen, scale)
-            draw_errors(validator.errors, screen, scale)
+            draw_errors(validator.dead_ends, screen, scale, (176, 0, 32))
+            draw_errors(validator.unconstrained_floor, screen, scale, (98, 0, 238))
             draw_selected_pos(selected_level_pos, screen, scale)
 
     pygame.display.update()
@@ -126,7 +130,7 @@ while not done:
             needs_draw = True
 
         if e.type == KEYUP and e.key == K_g:
-            level_generator.create(viewport_pos)
+            valid = generate(level_generator, viewport_pos)
             needs_draw = True
 
         if e.type == KEYUP and e.key == K_a:

@@ -4,11 +4,46 @@ from .bsp_corridor_pruner import CorridorPruner
 class DungeonValidator:
     def __init__(self, generator):
         self.generator = generator
-        self.errors = set()
 
     def validates(self):
-        self.errors.clear()
+        self.dead_ends = set()
+        self.unconstrained_floor = set()
+
         valid = self._check_dead_ends()
+        if not self._check_reachability():
+            valid = False
+
+        return valid
+
+    def _check_reachability(self):
+        valid = True
+        all_floor_tiles = set()
+        level = self.generator.level
+
+        for x in range(level.size[0]):
+            for y in range(level.size[1]):
+                pos = (x, y)
+                tile = level.tile_at(pos)
+                if tile == self.generator.carver.empty_tile:
+                    all_floor_tiles.add(pos)
+
+        visited = set()
+        to_visit = set(all_floor_tiles)
+        while len(to_visit) > 0:
+            pos = to_visit.pop()
+            visited.add(pos)
+
+            for dx in range(-1, 2):
+                for dy in range(-1, 2):
+                    neighbour = (pos[0] + dx, pos[1] + dy)
+                    tile = level.tile_at(neighbour)
+                    if tile == self.generator.carver.empty_tile:
+                        if neighbour not in visited:
+                            to_visit.add(neighbour)
+                    elif tile == self.generator.carver.no_tile:
+                        self.unconstrained_floor.add(pos)
+                        valid = False
+
         return valid
 
     def _check_dead_ends(self):
@@ -25,7 +60,7 @@ class DungeonValidator:
         if not valid:
             print(f'dead ends: {dead_ends}')
 
-        self.errors.update(dead_ends)
+        self.dead_ends = dead_ends
 
         return valid
 

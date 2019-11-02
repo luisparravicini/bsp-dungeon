@@ -32,10 +32,18 @@ class Level:
                 self.sheet.blit_tile_at(self.surface, surface_pos, tile_pos)
 
     def set_tile(self, pos, tile_pos):
-        self.tiles[self._tile_index(pos)] = tile_pos
+        index = self._tile_index(pos)
+        if index is not None:
+            self.tiles[index] = tile_pos
 
     def tile_at(self, pos):
-        return self.tiles[self._tile_index(pos)]
+        index = self._tile_index(pos)
+        if index is None:
+            return None
+        return self.tiles[index]
 
     def _tile_index(self, pos):
-        return pos[0] + pos[1] * self.size[1]
+        if 0 <= pos[0] < self.size[0] and 0 <= pos[1] < self.size[1]:
+            return pos[0] + pos[1] * self.size[1]
+        else:
+            return None
