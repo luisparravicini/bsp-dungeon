@@ -90,7 +90,12 @@ class Game:
 
     def show_debug_info(self):
         fps = int(self.clock.get_fps())
-        msg = f'viewport:{self.viewport_pos} player:{self.player.pos} no_scroll_area:{self.no_scroll_area} fps:{fps} ghost_mode:{self.ghost_mode}'
+        msg = (
+            f'viewport:{self.viewport_pos} '
+            f'player:{self.player.pos} '
+            f'no_scroll_area:{self.no_scroll_area} '
+            f'fps:{fps} '
+            f'ghost_mode:{self.ghost_mode}')
         msg_surface = self.fps_font.render(
                 msg,
                 False,
