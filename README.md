@@ -9,6 +9,7 @@ There are two scripts you can run:
 
 * Move with `up`, `down`, `left`, `right`.
 * `d` to toggle debug info.
+* 'g' to toggle ghost mode (let's you stand in any tile of the level)
 
 ![](test.png)
 

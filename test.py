@@ -21,7 +21,7 @@ class Game:
         pygame.display.set_caption('..--..')
         self.sheet = SpritesheetManager('tiles.png')
         self.clock = pygame.time.Clock()
-        self.ghost_mode = True
+        self.ghost_mode = False
 
     def main(self):
         background_color = (40, 10, 40)
@@ -85,10 +85,12 @@ class Game:
 
                 if e.type == KEYDOWN and e.key == K_d:
                     show_debug = not show_debug
+                if e.type == KEYDOWN and e.key == K_g:
+                    self.ghost_mode = not self.ghost_mode
 
     def show_debug_info(self):
         fps = int(self.clock.get_fps())
-        msg = f'viewport:{self.viewport_pos} player:{self.player.pos} no_scroll_area:{self.no_scroll_area} fps:{fps}'
+        msg = f'viewport:{self.viewport_pos} player:{self.player.pos} no_scroll_area:{self.no_scroll_area} fps:{fps} ghost_mode:{self.ghost_mode}'
         msg_surface = self.fps_font.render(
                 msg,
                 False,
@@ -134,7 +136,7 @@ class Game:
             self.player.pos[1] + delta[1],
         )
         if self.no_scroll_area.collidepoint(pos_in_screen):
-            if self.level.empty_at(new_player_pos):
+            if self.level.has_floor_at(new_player_pos):
                 self.player.move(delta)
                 return
 
@@ -147,7 +149,7 @@ class Game:
             pos_in_level[1] += conf.ROOM_SIZE[1]
 
         if pos_in_level[pos_index] >= 0 and pos_in_level[pos_index] < self.level.size[pos_index]:
-            if self.ghost_mode or self.level.empty_at(new_player_pos):
+            if self.ghost_mode or self.level.has_floor_at(new_player_pos):
                 self.player.move(delta)
                 self.viewport_pos = (
                     self.viewport_pos[0] + delta[0],

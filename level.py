@@ -13,8 +13,8 @@ class Level:
         # if needs_redraw:
         self._blit(viewport_pos)
 
-    def empty_at(self, pos):
-        return self.tile_at(pos) is None
+    def has_floor_at(self, pos):
+        return self.tile_at(pos) == (0,0)
 
     def _blit(self, viewport_pos):
         self.surface.fill(self.background_color)
