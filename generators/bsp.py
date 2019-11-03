@@ -19,7 +19,7 @@ class BSPGenerator:
     def __init__(self, level, no_tile_pos):
         self.level = level
         self.iterations = 5
-        self.min_room = (5, 5)
+        self.min_room = (7, 7)
         self.carver = Carver(self, no_tile_pos)
         self.exporter = Exporter(self)
         self.corridor_pruner = CorridorPruner(self)
