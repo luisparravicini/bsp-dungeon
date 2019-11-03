@@ -101,12 +101,15 @@ while not done:
 
     if needs_draw or auto_create:
         needs_draw = False
+
         if auto_create:
             n += 1
             valid = generate(level_generator, viewport_pos)
-            if not valid:
-                auto_create = False
-                print("dungeon doesn't validates!")
+
+        if not valid:
+            auto_create = False
+            print("dungeon doesn't validates!")
+
         if n % 25 == 0 or not valid or needs_draw:
             screen.fill(Color('black'))
             draw_node(level_generator.generator.nodes, screen, scale)
@@ -151,4 +154,3 @@ while not done:
 
 if auto_create:
     dump_stats(start_time, n)
-

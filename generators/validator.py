@@ -10,39 +10,55 @@ class DungeonValidator:
         self.unconstrained_floor = set()
 
         valid = self._check_dead_ends()
-        if not self._check_reachability():
+        if not self._check_all_connected():
             valid = False
 
         return valid
 
-    def _check_reachability(self):
+    def _check_all_connected(self):
         valid = True
-        all_floor_tiles = set()
-        level = self.generator.level
+        # size = self.generator.level.size
+        # colors = [[None] * size[0] for item in range(size[1])]
 
-        for x in range(level.size[0]):
-            for y in range(level.size[1]):
-                pos = (x, y)
-                tile = level.tile_at(pos)
-                if tile == self.generator.carver.empty_tile:
-                    all_floor_tiles.add(pos)
+        # all_floor_tiles = set()
+        # level = self.generator.level
 
-        visited = set()
-        to_visit = set(all_floor_tiles)
-        while len(to_visit) > 0:
-            pos = to_visit.pop()
-            visited.add(pos)
+        # for x in range(level.size[0]):
+        #     for y in range(level.size[1]):
+        #         pos = (x, y)
+        #         tile = level.tile_at(pos)
+        #         if tile == self.generator.carver.empty_tile:
+        #             all_floor_tiles.add(pos)
 
-            for dx in range(-1, 2):
-                for dy in range(-1, 2):
-                    neighbour = (pos[0] + dx, pos[1] + dy)
-                    tile = level.tile_at(neighbour)
-                    if tile == self.generator.carver.empty_tile:
-                        if neighbour not in visited:
-                            to_visit.add(neighbour)
-                    elif tile == self.generator.carver.no_tile:
-                        self.unconstrained_floor.add(pos)
-                        valid = False
+        # visited = set()
+        # to_visit = set(all_floor_tiles)
+        # color = 0
+        # deltas = (
+        #     (0, 1),
+        #     (-1, 0),
+        #     (0, 0),
+        #     (1, 0),
+        #     (0, -1),
+        # )
+        # while len(to_visit) > 0:
+        #     pos = to_visit.pop()
+        #     visited.add(pos)
+
+        #     if colors[pos[0]][pos[1]] is None:
+        #         color += 1
+        #         colors[pos[0]][pos[1]] = color
+
+        #     for delta in deltas:
+        #         neighbour = (pos[0] + dx, pos[1] + dy)
+        #         colors[pos[0]][pos[1]] = color
+
+        #         tile = level.tile_at(neighbour)
+        #         if tile == self.generator.carver.empty_tile:
+        #             if neighbour not in visited:
+        #                 to_visit.add(neighbour)
+        #         elif tile == self.generator.carver.no_tile:
+        #             self.unconstrained_floor.add(pos)
+        #             valid = False
 
         return valid
 

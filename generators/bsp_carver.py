@@ -8,7 +8,6 @@ class Carver:
         self.no_tile = no_tile_pos
 
     def make_level(self):
-
         for x in range(self.generator.level.size[0]):
             for y in range(self.generator.level.size[0]):
                 self.generator.level.set_tile((x, y), self.no_tile)
@@ -18,6 +17,22 @@ class Carver:
 
         for corridor in self.generator.corridors:
             self.carve_corridor(corridor)
+
+        self.carve_walls()
+
+    def carve_walls(self):
+        level = self.generator.level
+
+        for x in range(level.size[0]):
+            for y in range(level.size[0]):
+                tile = level.tile_at((x, y))
+                if tile == self.empty_tile:
+                    self._set_walls_on_neighbours(x, y)
+
+    def _set_walls_on_neighbours(self, x, y):
+        for dx in range(-1, 2):
+            for dy in range(-1, 2):
+                self.set_tile_if_not_empty((x + dx, y + dy))
 
     def set_tile(self, pos, tile):
         level = self.generator.level
@@ -37,27 +52,18 @@ class Carver:
     def carve_room(self, room):
         for x in range(room.x, room.right):
             for y in range(room.y, room.bottom):
-                if x == room.x or x == room.right - 1:
-                    tile = self.wall_tile
-                else:
-                    if y == room.y or y == room.bottom - 1:
-                        tile = self.wall_tile
-                    else:
+                if x != room.x and x != room.right - 1:
+                    if y != room.y and y != room.bottom - 1:
                         tile = self.empty_tile
-
-                self.set_tile((x, y), tile)
+                        self.set_tile((x, y), tile)
 
     def carve_corridor(self, corridor):
         vert_line = (corridor[0] == corridor[2])
         if vert_line:
             x = corridor[0]
             for y in range(corridor[1], corridor[3] + 1):
-                self.set_tile_if_not_empty((x - 1, y))
-                self.set_tile_if_not_empty((x + 1, y))
                 self.set_tile((x, y), self.empty_tile)
         else:
             y = corridor[1]
             for x in range(corridor[0], corridor[2] + 1):
-                self.set_tile_if_not_empty((x, y - 1))
-                self.set_tile_if_not_empty((x, y + 1))
                 self.set_tile((x, y), self.empty_tile)
