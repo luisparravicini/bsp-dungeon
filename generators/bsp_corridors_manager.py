@@ -51,7 +51,7 @@ class CorridorsManager:
         self.generator.corridors.extend(corridor)
 
     def _gen_corridor_xy(self, room_a, room_b):
-        x = random.randint(room_a.x, room_a.right - 1)
+        x = random.randint(room_a.x + 1, room_a.right - 2)
         min_y = min(room_a.centery, room_b.centery)
         max_y = max(room_a.centery, room_b.centery)
 
@@ -64,7 +64,7 @@ class CorridorsManager:
     def _gen_corridor_y(self, room_a, room_b):
         intersect = (
             max(room_a.y, room_b.y) + 1,
-            min(room_a.bottom - 1, room_b.bottom - 1) - 1
+            min(room_a.bottom, room_b.bottom) - 2
         )
         if intersect[0] > intersect[1]:
             return None
