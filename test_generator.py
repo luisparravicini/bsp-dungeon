@@ -79,8 +79,8 @@ def dump_stats(start_time, n):
     print(f'created {n} dungeons in {elapsed:.0f}s ({elapsed_one_ms:.2f}ms per dungeon)')
 
 
-def generate(level_generator, viewport_pos):
-    level_generator.create(viewport_pos)
+def generate(level_generator):
+    level_generator.create()
     return validator.validates()
 
 
@@ -100,8 +100,7 @@ clock = pygame.time.Clock()
 
 LEVEL_FNAME = 'level.json'
 
-viewport_pos = (0, 0)
-valid = generate(level_generator, viewport_pos)
+valid = generate(level_generator)
 
 done = False
 needs_draw = True
@@ -116,7 +115,7 @@ while not done:
 
         if auto_create:
             n += 1
-            valid = generate(level_generator, viewport_pos)
+            valid = generate(level_generator)
 
         if not valid:
             auto_create = False
@@ -148,7 +147,7 @@ while not done:
             needs_draw = True
 
         if e.type == KEYUP and e.key == K_g:
-            valid = generate(level_generator, viewport_pos)
+            valid = generate(level_generator)
             needs_draw = True
 
         if e.type == KEYUP and e.key == K_a:
