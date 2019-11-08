@@ -34,16 +34,16 @@ class BSPGenerator:
         self.put_rooms()
         self.corridor_manager.connect_rooms(self.nodes)
         self.corridor_pruner.prune()
+        self.rooms = list(self._rooms_dict.values())
 
         self.carver.make_level()
-
-        self.rooms = list(self._rooms_dict.values())
 
     def save(self, path):
         self.exporter.save(path)
 
     def load(self, path):
         self.exporter.load(path)
+        self.carver.make_level()
 
     def put_rooms(self, node=None):
         if node is None:

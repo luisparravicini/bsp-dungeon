@@ -12,7 +12,7 @@ class Carver:
             for y in range(self.generator.level.size[0]):
                 self.generator.level.set_tile((x, y), self.no_tile)
 
-        for room in self.generator._rooms_dict.values():
+        for room in self.generator.rooms:
             self.carve_room(room)
 
         for corridor in self.generator.corridors:
