@@ -48,7 +48,19 @@ class CorridorsManager:
             options.append(corridor)
 
         corridor = random.choice(options)
+        for i in range(len(corridor)):
+            self._min_to_max(corridor[i])
+
         self.generator.corridors.extend(corridor)
+
+    def _min_to_max(self, segment):
+        """
+        Makes sure the start is less than the end (useful later
+        to iterate with range)
+        """
+        for a, b in ((0, 2), (1, 3)):
+            if segment[a] > segment[b]:
+                segment[a], segment[b] = segment[b], segment[a]
 
     def _gen_corridor_xy(self, room_a, room_b):
         x = random.randint(room_a.x + 1, room_a.right - 2)
