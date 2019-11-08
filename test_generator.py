@@ -9,7 +9,7 @@ import datetime
 from generators import DungeonValidator
 
 
-floor_color = (40, 40, 40)
+floor_color = (60, 60, 60)
 wall_color = (100, 150, 30)
 
 
