@@ -50,6 +50,18 @@ def draw_selected_pos(pos, surface, scale):
             width=0)
 
 
+def draw_corridors(level, corridors, surface, scale):
+    color = (95, 128, 142)
+    for corridor in corridors:
+        if corridor[0] == corridor[2]:
+            deltas = (0.5, 0)
+        else:
+            deltas = (0, 0.5)
+        pygame.draw.line(surface, color, (
+            (corridor[0] + deltas[0]) * scale, (corridor[1] + deltas[1]) * scale),
+            ((corridor[2]  + deltas[0]) * scale, (corridor[3] + deltas[1]) * scale),
+            width=1)
+
 def draw_errors(errors, surface, scale, color):
     r = 1.5
 
@@ -114,6 +126,7 @@ while not done:
             screen.fill(Color('black'))
             draw_node(level_generator.generator.nodes, screen, scale)
             draw_level(level, level_generator.generator.carver, screen, scale)
+            draw_corridors(level, level_generator.generator.corridors, screen, scale)
             draw_errors(validator.dead_ends, screen, scale, (176, 0, 32))
             draw_errors(validator.unconstrained_floor, screen, scale, (98, 0, 238))
             draw_selected_pos(selected_level_pos, screen, scale)
