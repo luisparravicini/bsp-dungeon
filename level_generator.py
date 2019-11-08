@@ -8,5 +8,5 @@ class LevelGenerator:
         self.level = level
         self.generator = BSPGenerator(self.level, conf.NO_TILE_POS)
 
-    def create(self, center_pos):
-        self.generator.create(center_pos)
+    def create(self):
+        self.generator.create()

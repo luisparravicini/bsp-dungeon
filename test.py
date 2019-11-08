@@ -27,15 +27,7 @@ class Game:
         background_color = (40, 10, 40)
 
         self.level = Level((80, 80), self.bkg_surface, self.sheet, background_color)
-        self.viewport_pos = (
-            int(self.level.size[0] / 2 - conf.ROOM_SIZE[0] / 2),
-            int(self.level.size[1] / 2 - conf.ROOM_SIZE[1] / 2),
-        )
         self.level_generator = LevelGenerator(self.level)
-
-        center = tuple((int(v / 2) for v in self.level.size))
-        self.player = Player(center)
-        player_view = PlayerView(self.sheet, self.player, self.screen)
 
         self.fps_font = pygame.font.Font(None, 22)
 
@@ -48,7 +40,16 @@ class Game:
         )
         self.no_scroll_screen_area = tuple(x * conf.TILE_SIZE for x in self.no_scroll_area)
 
-        self.level_generator.create(self.viewport_pos)
+        self.level_generator.create()
+        starting_room = random.choice(self.level_generator.generator.rooms)
+
+        self.player = Player(starting_room.center)
+        player_view = PlayerView(self.sheet, self.player, self.screen)
+
+        self.viewport_pos = (
+            self.player.pos[0] - conf.ROOM_SIZE[0] // 2,
+            self.player.pos[1] - conf.ROOM_SIZE[1] // 2,
+        )
 
         done = 0
         show_debug = False

@@ -25,7 +25,7 @@ class BSPGenerator:
         self.corridor_pruner = CorridorPruner(self)
         self.corridor_manager = CorridorsManager(self)
 
-    def create(self, center_pos):
+    def create(self):
         self.nodes = list()
         self._rooms_dict = dict()
         self.corridors = list()
