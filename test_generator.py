@@ -139,9 +139,11 @@ while not done:
             break
 
         if e.type == KEYUP and e.key == K_s:
+            print('saving level to', LEVEL_FNAME)
             level_generator.generator.save(LEVEL_FNAME)
 
         if e.type == KEYUP and e.key == K_l:
+            print('loading level from', LEVEL_FNAME)
             level_generator.generator.load(LEVEL_FNAME)
             needs_draw = True
 
